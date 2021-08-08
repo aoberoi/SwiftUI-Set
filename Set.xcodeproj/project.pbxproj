@@ -8,18 +8,22 @@
 
 /* Begin PBXBuildFile section */
 		92D7292C26BE079D008E7FDE /* SetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D7292B26BE079D008E7FDE /* SetApp.swift */; };
-		92D7292E26BE079D008E7FDE /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D7292D26BE079D008E7FDE /* ContentView.swift */; };
+		92D7292E26BE079D008E7FDE /* SetGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D7292D26BE079D008E7FDE /* SetGameView.swift */; };
 		92D7293026BE079F008E7FDE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 92D7292F26BE079F008E7FDE /* Assets.xcassets */; };
 		92D7293326BE079F008E7FDE /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 92D7293226BE079F008E7FDE /* Preview Assets.xcassets */; };
+		92D7293D26BE113C008E7FDE /* Set.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D7293C26BE113C008E7FDE /* Set.swift */; };
+		92D7293F26BE116F008E7FDE /* SetGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D7293E26BE116F008E7FDE /* SetGame.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		92D7292826BE079D008E7FDE /* Set.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Set.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		92D7292B26BE079D008E7FDE /* SetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetApp.swift; sourceTree = "<group>"; };
-		92D7292D26BE079D008E7FDE /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		92D7292D26BE079D008E7FDE /* SetGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGameView.swift; sourceTree = "<group>"; };
 		92D7292F26BE079F008E7FDE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		92D7293226BE079F008E7FDE /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		92D7293426BE079F008E7FDE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		92D7293C26BE113C008E7FDE /* Set.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Set.swift; sourceTree = "<group>"; };
+		92D7293E26BE116F008E7FDE /* SetGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGame.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,7 +57,9 @@
 			isa = PBXGroup;
 			children = (
 				92D7292B26BE079D008E7FDE /* SetApp.swift */,
-				92D7292D26BE079D008E7FDE /* ContentView.swift */,
+				92D7292D26BE079D008E7FDE /* SetGameView.swift */,
+				92D7293E26BE116F008E7FDE /* SetGame.swift */,
+				92D7293C26BE113C008E7FDE /* Set.swift */,
 				92D7292F26BE079F008E7FDE /* Assets.xcassets */,
 				92D7293426BE079F008E7FDE /* Info.plist */,
 				92D7293126BE079F008E7FDE /* Preview Content */,
@@ -138,8 +144,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				92D7292E26BE079D008E7FDE /* ContentView.swift in Sources */,
+				92D7292E26BE079D008E7FDE /* SetGameView.swift in Sources */,
 				92D7292C26BE079D008E7FDE /* SetApp.swift in Sources */,
+				92D7293F26BE116F008E7FDE /* SetGame.swift in Sources */,
+				92D7293D26BE113C008E7FDE /* Set.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
