@@ -71,8 +71,7 @@ struct CardView: View {
     private var openSymbol: some View {
         switch card.symbol {
         case .first:
-            // TODO: Add InsettableShape conformance to Diamond
-            Diamond().stroke(lineWidth: DrawingConstants.openLineWidth)
+            Diamond().strokeBorder(lineWidth: DrawingConstants.openLineWidth)
         case .second:
             Rectangle().strokeBorder(lineWidth: DrawingConstants.openLineWidth)
         case .third:
@@ -137,7 +136,7 @@ struct CardView_Previews: PreviewProvider {
         let card = SetGame.Card(
             cardinaity: .third,
             color: .second,
-            symbol: .third,
+            symbol: .first,
             shading: .first
         )
         return Group {
