@@ -12,19 +12,27 @@ struct SetGameView: View {
     
     var body: some View {
         VStack {
+            playArea
             Spacer()
-            HStack {
-                Button("Deal 3 More Cards") {
-                    
-                }
-                Spacer()
-                Button("New Game") {
-                    
-                }
-            }
-            .padding()
-            
+            controls
         }
+    }
+    
+    var controls: some View {
+        HStack {
+            Button("Deal 3 More Cards") {
+                
+            }
+            Spacer()
+            Button("New Game") {
+                
+            }
+        }
+        .padding()
+    }
+    
+    var playArea: some View {
+        Text("Cards go here")
     }
 }
 
