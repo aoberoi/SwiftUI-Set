@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SetGameView: View {
-    var game: SetGame
+    @ObservedObject var game: SetGame
     
     var body: some View {
         VStack {
@@ -32,7 +32,14 @@ struct SetGameView: View {
     }
     
     var playArea: some View {
-        Text("Cards go here")
+        AspectVGrid(items: game.drawnCards, aspectRatio: 2/1) { card in
+            CardView(card: card)
+                .padding(DrawingConstants.cardPadding)
+        }
+    }
+    
+    struct DrawingConstants {
+        static let cardPadding: CGFloat = 8.0
     }
 }
 

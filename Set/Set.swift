@@ -9,7 +9,7 @@ import Foundation
 
 struct Set {
     
-    private(set) var deck: [Card] = {
+    private var deck: [Card] = {
         var cards: [Card] = []
         for cardinality in TriState.allCases {
             for color in TriState.allCases {
@@ -20,10 +20,28 @@ struct Set {
                 }
             }
         }
-        return cards
+        return cards.shuffled()
     }()
     
-    struct Card {
+    var drawnCards: [Card] = []
+    
+    init() {
+        drawCards(amount: 12)
+    }
+    
+    public mutating func drawCards(amount: Int) {
+        for _ in 0..<amount {
+            drawnCards.append(deck.removeFirst())
+        }
+    }
+    
+    struct Card: Identifiable {
+        // TODO: This is an arbitrary way to identify cards, but it works. Ideally, the ID type would be a Tuple but
+        // since Tuple's are not Hashable that doesn't work.
+        var id: [TriState] {
+            [cardinaity, color, symbol, shading]
+        }
+
         let cardinaity: TriState
         let color: TriState
         let symbol: TriState

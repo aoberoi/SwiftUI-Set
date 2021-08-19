@@ -11,4 +11,8 @@ class SetGame : ObservableObject {
     typealias Card = Set.Card
     
     @Published private var gameModel = Set()
+    
+    var drawnCards: [Card] {
+        gameModel.drawnCards
+    }
 }
