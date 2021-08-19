@@ -5,6 +5,6 @@
 //  Created by Ankur Oberoi on 8/10/21.
 //
 
-enum TriState {
+enum TriState: CaseIterable {
     case first, second, third
 }
