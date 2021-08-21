@@ -13,21 +13,23 @@ struct CardView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                RoundedRectangle(cornerRadius: DrawingConstants.edgeCornerRadius)
+                RoundedRectangle(cornerRadius: cardCornerRadius(for: geometry.size))
                     .strokeBorder(
                         DrawingConstants.cardColor,
-                        style: StrokeStyle(lineWidth: DrawingConstants.edgeLineWidth)
+                        style: StrokeStyle(lineWidth: edgeLineWidth(for: geometry.size))
                     )
                 if geometry.size.isNotWiderThanTall {
                     VStack(spacing: DrawingConstants.symbolSpacing) {
                         ForEach(0..<numberOfSymbols) {_ in
-                            symbol.frame(maxHeight: symbolLength(for: geometry.size.height))
+                            symbol(for: geometry.size)
+                                .frame(maxHeight: symbolLength(for: geometry.size.height))
                         }
                     }.padding(symbolPadding(for: geometry.size))
                 } else {
                     HStack(spacing: DrawingConstants.symbolSpacing) {
                         ForEach(0..<numberOfSymbols) {_ in
-                            symbol.frame(maxWidth: symbolLength(for: geometry.size.width))
+                            symbol(for: geometry.size)
+                                .frame(maxWidth: symbolLength(for: geometry.size.width))
                         }
                     }.padding(symbolPadding(for: geometry.size))
                 }
@@ -36,7 +38,7 @@ struct CardView: View {
     }
     
     @ViewBuilder
-    private var symbol: some View {
+    private func symbol(for size: CGSize) -> some View {
         Group {
             switch card.shading {
             case .first:
@@ -44,7 +46,7 @@ struct CardView: View {
             case .second:
                 stripedSymbol
             case .third:
-                openSymbol
+                openSymbol(for: size)
             }
         }.foregroundColor(symbolColor)
     }
@@ -68,14 +70,15 @@ struct CardView: View {
     }
     
     @ViewBuilder
-    private var openSymbol: some View {
+    private func openSymbol(for size: CGSize) -> some View {
+        let lineWidth = openSymbolLineWidth(for: size)
         switch card.symbol {
         case .first:
-            Diamond().strokeBorder(lineWidth: DrawingConstants.openLineWidth)
+            Diamond().strokeBorder(lineWidth: lineWidth)
         case .second:
-            Rectangle().strokeBorder(lineWidth: DrawingConstants.openLineWidth)
+            Rectangle().strokeBorder(lineWidth: lineWidth)
         case .third:
-            Capsule().strokeBorder(lineWidth: DrawingConstants.openLineWidth)
+            Capsule().strokeBorder(lineWidth: lineWidth)
         }
     }
     
@@ -102,9 +105,24 @@ struct CardView: View {
         }
     }
     
+    private func cardCornerRadius(for size:CGSize) -> CGFloat {
+        let shortestDimension = min(size.height, size.width)
+        return DrawingConstants.cardCornerRadiusRatio * shortestDimension
+    }
+    
+    private func edgeLineWidth(for size:CGSize) -> CGFloat {
+        let shortestDimension = min(size.height, size.width)
+        return max(DrawingConstants.edgeLineWidthRatio * shortestDimension, 2.0)
+    }
+    
     private func symbolPadding(for size:CGSize) -> CGFloat {
         let longestDimension = max(size.height, size.width)
         return DrawingConstants.symbolPaddingRatio * longestDimension
+    }
+    
+    private func openSymbolLineWidth(for size: CGSize) -> CGFloat {
+        let shortestDimension = min(size.height, size.width)
+        return max(DrawingConstants.openLineWidthRatio * shortestDimension, 2.0)
     }
     
     private func symbolLength(for longestDimensionLength: CGFloat) -> CGFloat {
@@ -114,18 +132,16 @@ struct CardView: View {
     }
     
     private struct DrawingConstants {
-        // TODO: lineWidths might look unacceptable at small card sizes. if that's the case, then we will change these constants to funcs which compute a better looking value
-        
         static let cardColor: Color = .orange
         
-        static let edgeCornerRadius: CGFloat = 10.0
-        static let edgeLineWidth: CGFloat = 3
+        static let cardCornerRadiusRatio: CGFloat = 0.05
+        static let edgeLineWidthRatio: CGFloat = 0.01
 
         static let symbolPaddingRatio: CGFloat = 0.08
         
         static let stripedOpacity: Double = 0.5
 
-        static let openLineWidth: CGFloat  = 5
+        static let openLineWidthRatio: CGFloat  = 0.05
         
         static let symbolSpacing: CGFloat = 10
     }
@@ -137,7 +153,7 @@ struct CardView_Previews: PreviewProvider {
             cardinaity: .third,
             color: .second,
             symbol: .first,
-            shading: .first
+            shading: .third
         )
         return Group {
             CardView(card: card)
@@ -152,8 +168,12 @@ struct CardView_Previews: PreviewProvider {
                 .previewDisplayName("Wide")
                 .previewLayout(.sizeThatFits)
             CardView(card: card)
-                .frame(width: 45, height: 90, alignment: .center)
+                .frame(width: 25, height: 70, alignment: .center)
                 .previewDisplayName("Tall and small")
+                .previewLayout(.sizeThatFits)
+            CardView(card: card)
+                .frame(width: 70, height: 25, alignment: .center)
+                .previewDisplayName("Wide and small")
                 .previewLayout(.sizeThatFits)
         }
     }
