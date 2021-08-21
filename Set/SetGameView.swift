@@ -21,11 +21,11 @@ struct SetGameView: View {
     var controls: some View {
         HStack {
             Button("Deal 3 More Cards") {
-                
+                game.drawThreeCards()
             }
             Spacer()
             Button("New Game") {
-                
+                game.reset()
             }
         }
         .padding()

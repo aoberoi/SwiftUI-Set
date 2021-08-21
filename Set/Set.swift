@@ -31,7 +31,9 @@ struct Set {
     
     public mutating func drawCards(amount: Int) {
         for _ in 0..<amount {
-            drawnCards.append(deck.removeFirst())
+            if !deck.isEmpty {
+                drawnCards.append(deck.removeFirst())
+            }
         }
     }
     

@@ -12,7 +12,15 @@ class SetGame : ObservableObject {
     
     @Published private var gameModel = Set()
     
-    var drawnCards: [Card] {
-        gameModel.drawnCards
+    var drawnCards: [Card] { gameModel.drawnCards }
+    
+    // MARK: Intents
+    
+    func drawThreeCards() {
+        gameModel.drawCards(amount: 3)
+    }
+    
+    func reset() {
+        gameModel = Set()
     }
 }
