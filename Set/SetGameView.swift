@@ -32,7 +32,7 @@ struct SetGameView: View {
     }
     
     var playArea: some View {
-        AspectVGrid(items: game.drawnCards, aspectRatio: 2/1) { card in
+        AspectVGrid(items: game.drawnCards, aspectRatio: 2/1, minItemWidth: DrawingConstants.minimumCardWidth) { card in
             CardView(card: card)
                 .padding(DrawingConstants.cardPadding)
         }
@@ -40,6 +40,7 @@ struct SetGameView: View {
     
     struct DrawingConstants {
         static let cardPadding: CGFloat = 8.0
+        static let minimumCardWidth: CGFloat = 110.0
     }
 }
 

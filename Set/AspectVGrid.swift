@@ -12,18 +12,20 @@ struct AspectVGrid<Item, ItemView>: View where ItemView: View, Item: Identifiabl
     var items: [Item]
     var aspectRatio: CGFloat
     var content: (Item) -> ItemView
+    var minItemWidth: CGFloat
     
-    init(items: [Item], aspectRatio: CGFloat, @ViewBuilder content: @escaping (Item) -> ItemView) {
+    init(items: [Item], aspectRatio: CGFloat, minItemWidth: CGFloat, @ViewBuilder content: @escaping (Item) -> ItemView) {
+        // TODO: can we remove this custom initializer? what's the deal with @escaping in that case?
         self.items = items
         self.aspectRatio = aspectRatio
+        self.minItemWidth = minItemWidth
         self.content = content
     }
     
     var body: some View {
         GeometryReader { geometry in
-            VStack {
-                Spacer(minLength: 0)
-                let width: CGFloat = widthThatFits(itemCount: items.count, in: geometry.size, itemAspectRatio: aspectRatio)
+            ScrollView {
+                let width: CGFloat = max(widthThatFits(itemCount: items.count, in: geometry.size, itemAspectRatio: aspectRatio), minItemWidth)
                 LazyVGrid(columns: [adaptiveGridItem(width: width)], spacing: 0) {
                     ForEach(items) { item in
                         content(item).aspectRatio(aspectRatio, contentMode: .fit)
@@ -37,7 +39,6 @@ struct AspectVGrid<Item, ItemView>: View where ItemView: View, Item: Identifiabl
                     // This might limit the future ability to perform animations on items.
                     // https://swiftui-lab.com/swiftui-id/
                     .id(items.map { $0.id })
-                Spacer(minLength: 0)
             }
         }
     }
