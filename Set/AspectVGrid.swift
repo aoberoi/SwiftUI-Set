@@ -9,18 +9,10 @@
 import SwiftUI
 
 struct AspectVGrid<Item, ItemView>: View where ItemView: View, Item: Identifiable {
-    var items: [Item]
-    var aspectRatio: CGFloat
-    var content: (Item) -> ItemView
-    var minItemWidth: CGFloat
-    
-    init(items: [Item], aspectRatio: CGFloat, minItemWidth: CGFloat, @ViewBuilder content: @escaping (Item) -> ItemView) {
-        // TODO: can we remove this custom initializer? what's the deal with @escaping in that case?
-        self.items = items
-        self.aspectRatio = aspectRatio
-        self.minItemWidth = minItemWidth
-        self.content = content
-    }
+    let items: [Item]
+    let aspectRatio: CGFloat
+    let minItemWidth: CGFloat
+    let content: (Item) -> ItemView
     
     var body: some View {
         GeometryReader { geometry in
