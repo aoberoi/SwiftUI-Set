@@ -13,6 +13,10 @@ class SetGame : ObservableObject {
     @Published private var gameModel = Set()
     
     var drawnCards: [Card] { gameModel.drawnCards }
+    var deckIsEmpty: Bool { gameModel.deckIsEmpty }
+    
+    var matchIsSelected: Bool { gameModel.matchIsSelected }
+    var numberOfSelectedCards: Int { gameModel.selectedCardIndicies.count }
     
     // MARK: Intents
     
@@ -22,5 +26,13 @@ class SetGame : ObservableObject {
     
     func reset() {
         gameModel = Set()
+    }
+    
+    func choose(card: Card) {
+        gameModel.choose(card: card)
+    }
+    
+    func isSelected(card: Card) -> Bool {
+        gameModel.isSelected(card: card)
     }
 }

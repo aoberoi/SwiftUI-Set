@@ -9,24 +9,30 @@ import SwiftUI
 
 struct CardView: View {
     let card: SetGame.Card
+    let cardEdgeColor: Color
+    let hasThickEdge: Bool
   
     var body: some View {
         GeometryReader { geometry in
             ZStack {
+                // Card border
                 RoundedRectangle(cornerRadius: cardCornerRadius(for: geometry.size))
                     .strokeBorder(
-                        DrawingConstants.cardColor,
+                        cardEdgeColor,
                         style: StrokeStyle(lineWidth: edgeLineWidth(for: geometry.size))
                     )
+                // Card symbols
                 if geometry.size.isNotWiderThanTall {
-                    VStack(spacing: DrawingConstants.symbolSpacing) {
+                    // Vertically stacked card symbols
+                    VStack(spacing: DrawingConstants.symbolSpacingRatio * geometry.size.height) {
                         ForEach(0..<numberOfSymbols) {_ in
                             symbol(for: geometry.size)
                                 .frame(maxHeight: symbolLength(for: geometry.size.height))
                         }
                     }.padding(symbolPadding(for: geometry.size))
                 } else {
-                    HStack(spacing: DrawingConstants.symbolSpacing) {
+                    // Horizontally stacked card symbols
+                    HStack(spacing: DrawingConstants.symbolSpacingRatio * geometry.size.width) {
                         ForEach(0..<numberOfSymbols) {_ in
                             symbol(for: geometry.size)
                                 .frame(maxWidth: symbolLength(for: geometry.size.width))
@@ -112,7 +118,8 @@ struct CardView: View {
     
     private func edgeLineWidth(for size:CGSize) -> CGFloat {
         let shortestDimension = min(size.height, size.width)
-        return max(DrawingConstants.edgeLineWidthRatio * shortestDimension, 2.0)
+        let ratio = hasThickEdge ? DrawingConstants.thickEdgeLineWidthRatio : DrawingConstants.thinEdgeLineWidthRatio
+        return max(ratio * shortestDimension, 1.0)
     }
     
     private func symbolPadding(for size:CGSize) -> CGFloat {
@@ -127,23 +134,22 @@ struct CardView: View {
     
     private func symbolLength(for longestDimensionLength: CGFloat) -> CGFloat {
         let padding = 2 * DrawingConstants.symbolPaddingRatio * longestDimensionLength
-        let maximumSpacing = 2 * DrawingConstants.symbolSpacing
+        let maximumSpacing = 2 * DrawingConstants.symbolSpacingRatio * longestDimensionLength
         return (longestDimensionLength - padding - maximumSpacing) / 3
     }
     
     private struct DrawingConstants {
-        static let cardColor: Color = .orange
-        
         static let cardCornerRadiusRatio: CGFloat = 0.05
-        static let edgeLineWidthRatio: CGFloat = 0.01
+        
+        static let thinEdgeLineWidthRatio: CGFloat = 0.02
+        static let thickEdgeLineWidthRatio: CGFloat = 0.05
 
         static let symbolPaddingRatio: CGFloat = 0.08
+        static let symbolSpacingRatio: CGFloat = 0.08
         
         static let stripedOpacity: Double = 0.5
 
         static let openLineWidthRatio: CGFloat  = 0.05
-        
-        static let symbolSpacing: CGFloat = 10
     }
 }
 
@@ -156,22 +162,22 @@ struct CardView_Previews: PreviewProvider {
             shading: .third
         )
         return Group {
-            CardView(card: card)
+            CardView(card: card, cardEdgeColor: .orange, hasThickEdge: false)
                 .previewDisplayName("Tall")
                 .previewLayout(.sizeThatFits)
-            CardView(card: card)
+            CardView(card: card, cardEdgeColor: .orange, hasThickEdge: false)
                 .frame(width: 400, height: 400, alignment: .center)
                 .previewDisplayName("Square")
                 .previewLayout(.sizeThatFits)
-            CardView(card: card)
+            CardView(card: card, cardEdgeColor: .orange, hasThickEdge: false)
                 .frame(width: 600, height: 300, alignment: .center)
                 .previewDisplayName("Wide")
                 .previewLayout(.sizeThatFits)
-            CardView(card: card)
+            CardView(card: card, cardEdgeColor: .orange, hasThickEdge: false)
                 .frame(width: 25, height: 70, alignment: .center)
                 .previewDisplayName("Tall and small")
                 .previewLayout(.sizeThatFits)
-            CardView(card: card)
+            CardView(card: card, cardEdgeColor: .orange, hasThickEdge: false)
                 .frame(width: 70, height: 25, alignment: .center)
                 .previewDisplayName("Wide and small")
                 .previewLayout(.sizeThatFits)
