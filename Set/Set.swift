@@ -33,7 +33,34 @@ struct Set {
             return false
         }
         
-        // TODO: algoritm for checking when 3 cards are a match
+        // Checking for a match by eliminating mismatches that have a TriState with two of the same value and one different value
+        let selectedCards = selectedCardIndicies.map { drawnCards[$0] }
+        
+        // Cardinality
+        let cardinalities = selectedCards.map { $0.cardinaity }
+        let cardinalityCounts = TriState.stateCounts(in: cardinalities)
+        if (TriState.hasTwoOfAnyState(in: cardinalityCounts)) {
+            return false
+        }
+        // Color
+        let colors = selectedCards.map { $0.color }
+        let colorCounts = TriState.stateCounts(in: colors)
+        if (TriState.hasTwoOfAnyState(in: colorCounts)) {
+            return false
+        }
+        // Symbol
+        let symbols = selectedCards.map { $0.symbol }
+        let symbolCounts = TriState.stateCounts(in: symbols)
+        if (TriState.hasTwoOfAnyState(in: symbolCounts)) {
+            return false
+        }
+        // Shading
+        let shadings = selectedCards.map { $0.shading }
+        let shadingCounts = TriState.stateCounts(in: shadings)
+        if (TriState.hasTwoOfAnyState(in: shadingCounts)) {
+            return false
+        }
+        
         return true
     }
     
