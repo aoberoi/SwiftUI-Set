@@ -40,6 +40,7 @@ struct CardView: View {
                     }.padding(symbolPadding(for: geometry.size))
                 }
             }
+            .contentShape(RoundedRectangle(cornerRadius: cardCornerRadius(for: geometry.size)))
         }
     }
     

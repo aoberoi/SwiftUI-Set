@@ -35,7 +35,6 @@ struct SetGameView: View {
     var playArea: some View {
         AspectVGrid(items: game.drawnCards, aspectRatio: 2/1, minItemWidth: DrawingConstants.minimumCardWidth) { card in
             CardView(card: card, cardEdgeColor: edgeColor(for: card), hasThickEdge: game.isSelected(card: card))
-            // TODO: use .contentShape() to make hit testing on taps recognize the whitespace within a card OR give the card backgrounds (for light and dark)
                 .padding(DrawingConstants.cardPadding)
                 .onTapGesture {
                     game.choose(card: card)
