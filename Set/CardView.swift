@@ -15,32 +15,40 @@ struct CardView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                // Card border
-                RoundedRectangle(cornerRadius: cardCornerRadius(for: geometry.size))
-                    .strokeBorder(
-                        cardEdgeColor,
-                        style: StrokeStyle(lineWidth: edgeLineWidth(for: geometry.size))
-                    )
-                // Card symbols
-                if geometry.size.isNotWiderThanTall {
-                    // Vertically stacked card symbols
-                    VStack(spacing: DrawingConstants.symbolSpacingRatio * geometry.size.height) {
-                        ForEach(0..<numberOfSymbols) {_ in
-                            symbol(for: geometry.size)
-                                .frame(maxHeight: symbolLength(for: geometry.size.height))
-                        }
-                    }.padding(symbolPadding(for: geometry.size))
-                } else {
-                    // Horizontally stacked card symbols
-                    HStack(spacing: DrawingConstants.symbolSpacingRatio * geometry.size.width) {
-                        ForEach(0..<numberOfSymbols) {_ in
-                            symbol(for: geometry.size)
-                                .frame(maxWidth: symbolLength(for: geometry.size.width))
-                        }
-                    }.padding(symbolPadding(for: geometry.size))
-                }
+                border(for: geometry.size)
+                symbols(for: geometry.size)
             }
             .contentShape(RoundedRectangle(cornerRadius: cardCornerRadius(for: geometry.size)))
+        }
+    }
+    
+    @ViewBuilder
+    private func border(for size: CGSize) -> some View {
+        RoundedRectangle(cornerRadius: cardCornerRadius(for: size))
+            .strokeBorder(
+                cardEdgeColor,
+                style: StrokeStyle(lineWidth: edgeLineWidth(for: size))
+            )
+    }
+    
+    @ViewBuilder
+    private func symbols(for size: CGSize) -> some View {
+        if size.isNotWiderThanTall {
+            // Vertically stacked card symbols
+            VStack(spacing: DrawingConstants.symbolSpacingRatio * size.height) {
+                ForEach(0..<numberOfSymbols) {_ in
+                    symbol(for: size)
+                        .frame(maxHeight: symbolLength(for: size.height))
+                }
+            }.padding(symbolPadding(for: size))
+        } else {
+            // Horizontally stacked card symbols
+            HStack(spacing: DrawingConstants.symbolSpacingRatio * size.width) {
+                ForEach(0..<numberOfSymbols) {_ in
+                    symbol(for: size)
+                        .frame(maxWidth: symbolLength(for: size.width))
+                }
+            }.padding(symbolPadding(for: size))
         }
     }
     
