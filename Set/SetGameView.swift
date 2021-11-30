@@ -34,8 +34,7 @@ struct SetGameView: View {
     
     var playArea: some View {
         AspectVGrid(items: game.drawnCards, aspectRatio: 2/1, minItemWidth: DrawingConstants.minimumCardWidth) { card in
-            // TODO: eliminate the redundant call
-            CardView(card: card, cardEdgeColor: styleForCard(card: card).0, hasThickEdge: styleForCard(card: card).1)
+            CardView(card: card, cardEdgeColor: edgeColor(for: card), hasThickEdge: game.isSelected(card: card))
             // TODO: use .contentShape() to make hit testing on taps recognize the whitespace within a card OR give the card backgrounds (for light and dark)
                 .padding(DrawingConstants.cardPadding)
                 .onTapGesture {
@@ -44,17 +43,17 @@ struct SetGameView: View {
         }
     }
     
-    private func styleForCard(card: SetGame.Card) -> (Color, Bool) {
+    private func edgeColor(for card: SetGame.Card) -> Color {
         if game.isSelected(card: card) {
             if game.matchIsSelected {
-                return (DrawingConstants.CardEdgeColors.matchedSet, true)
+                return DrawingConstants.CardEdgeColors.matchedSet
             } else if game.numberOfSelectedCards == 3 {
-                return (DrawingConstants.CardEdgeColors.unmatchedSet, true)
+                return DrawingConstants.CardEdgeColors.unmatchedSet
             } else {
-                return (DrawingConstants.CardEdgeColors.selected, true)
+                return DrawingConstants.CardEdgeColors.selected
             }
         } else {
-            return (DrawingConstants.CardEdgeColors.any, false)
+            return DrawingConstants.CardEdgeColors.any
         }
     }
     
