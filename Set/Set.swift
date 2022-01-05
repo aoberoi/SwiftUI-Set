@@ -9,7 +9,7 @@ import Foundation
 
 struct Set {
     
-    private var deck: [Card] = {
+    var deck: [Card] = {
         var cards: [Card] = []
         for cardinality in TriState.allCases {
             for color in TriState.allCases {
@@ -24,7 +24,9 @@ struct Set {
     }()
     
     var drawnCards: [Card] = []
+    var matchedCards: [Card] = []
     var deckIsEmpty: Bool { deck.isEmpty }
+    var hasNoMatchedCards: Bool { matchedCards.isEmpty }
     
     var selectedCardIndicies: Swift.Set<Int> = []
     
@@ -85,13 +87,9 @@ struct Set {
                     selectedCardIndicies.insert(cardIndex)
                 }
             } else if matchIsSelected {
-                // replace selected cards with 3 new ones from the deck (or as many as possible)
+                // move selected cards to the matched cards
                 for selectedIndex in selectedCardIndicies {
-                    if !deck.isEmpty {
-                        drawnCards.replaceSubrange(selectedIndex..<selectedIndex+1, with: [deck.removeFirst()])
-                    } else {
-                        drawnCards.remove(at: selectedIndex)
-                    }
+                    matchedCards.append(drawnCards.remove(at: selectedIndex))
                 }
                 // adjust selection
                 if selectedCardIndicies.contains(cardIndex) {

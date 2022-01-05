@@ -12,8 +12,13 @@ class SetGame : ObservableObject {
     
     @Published private var gameModel = Set()
     
-    var drawnCards: [Card] { gameModel.drawnCards }
+    var deck: [Card] { gameModel.deck }
     var deckIsEmpty: Bool { gameModel.deckIsEmpty }
+    
+    var drawnCards: [Card] { gameModel.drawnCards }
+    
+    var matchedCards: [Card] { gameModel.matchedCards }
+    var hasNoMatchedCards: Bool { gameModel.hasNoMatchedCards }
     
     var matchIsSelected: Bool { gameModel.matchIsSelected }
     var numberOfSelectedCards: Int { gameModel.selectedCardIndicies.count }

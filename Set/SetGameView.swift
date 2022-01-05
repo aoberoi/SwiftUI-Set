@@ -19,17 +19,59 @@ struct SetGameView: View {
     }
     
     var controls: some View {
+        // TODO: this looks really weird when the device is horozontal
         HStack {
-            Button("Deal 3 More Cards") {
-                game.drawThreeCards()
-            }
-                .disabled(game.deckIsEmpty)
-            Spacer()
+            deck
+                .onTapGesture {
+                    game.drawThreeCards()
+                }
             Button("New Game") {
                 game.reset()
             }
+            matchedCards
+            
         }
-        .padding()
+        .padding(.horizontal)
+    }
+    
+    @ViewBuilder
+    var matchedCards: some View {
+        if game.hasNoMatchedCards {
+            Color.clear
+                .aspectRatio(2/1, contentMode: .fit)
+        } else {
+            ZStack {
+                ForEach(game.matchedCards) { card in
+                    CardView(card: card,
+                             cardEdgeColor: DrawingConstants.CardEdgeColors.any,
+                             hasThickEdge: false)
+                }
+            }
+            .aspectRatio(2/1, contentMode: .fit)
+        }
+    }
+    
+    @ViewBuilder
+    var deck: some View {
+        // TODO: dry up the aspect ratio modifier code, move constant
+        if game.deckIsEmpty {
+            Rectangle()
+                .aspectRatio(2/1, contentMode: .fit)
+
+        } else {
+            ZStack {
+                ForEach(game.deck) { card in
+                    CardView(
+                        card: card,
+                        cardEdgeColor: DrawingConstants.CardEdgeColors.any,
+                        hasThickEdge: false,
+                        isFaceUp: false
+                    )
+                }
+            }
+            .aspectRatio(2/1, contentMode: .fit)
+
+        }
     }
     
     var playArea: some View {

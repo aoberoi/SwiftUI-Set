@@ -11,15 +11,33 @@ struct CardView: View {
     let card: SetGame.Card
     let cardEdgeColor: Color
     let hasThickEdge: Bool
+    let isFaceUp: Bool
+    
+    init(card: SetGame.Card, cardEdgeColor: Color, hasThickEdge: Bool, isFaceUp: Bool = true) {
+        self.card = card
+        self.cardEdgeColor = cardEdgeColor
+        self.hasThickEdge = hasThickEdge
+        self.isFaceUp = isFaceUp
+    }
   
     var body: some View {
         GeometryReader { geometry in
             ZStack {
                 border(for: geometry.size)
-                symbols(for: geometry.size)
+                if isFaceUp {
+                    symbols(for: geometry.size)
+                } else {
+                    cardBack(for: geometry.size)
+                }
             }
             .contentShape(RoundedRectangle(cornerRadius: cardCornerRadius(for: geometry.size)))
         }
+    }
+    
+    private func cardBack(for size: CGSize) -> some View {
+        Rectangle()
+            .foregroundColor(.accentColor)
+            .padding(symbolPadding(for: size))
     }
     
     @ViewBuilder
