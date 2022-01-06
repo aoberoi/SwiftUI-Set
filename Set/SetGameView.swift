@@ -23,7 +23,7 @@ struct SetGameView: View {
         HStack {
             deck
                 .onTapGesture {
-                    game.drawThreeCards()
+                    game.draw()
                 }
             Button("New Game") {
                 game.reset()

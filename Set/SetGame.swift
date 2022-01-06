@@ -25,8 +25,8 @@ class SetGame : ObservableObject {
     
     // MARK: Intents
     
-    func drawThreeCards() {
-        gameModel.drawCards(amount: 3)
+    func draw() {
+        gameModel.draw()
     }
     
     func reset() {

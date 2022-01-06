@@ -30,7 +30,7 @@ struct Set {
     
     var selectedCardIndicies: Swift.Set<Int> = []
     
-    var matchIsSelected: Bool {
+    public var matchIsSelected: Bool {
         guard selectedCardIndicies.count == 3 else {
             return false
         }
@@ -70,7 +70,18 @@ struct Set {
         drawCards(amount: 12)
     }
     
-    public mutating func drawCards(amount: Int) {
+    public mutating func draw() {
+        drawCards(amount: 3)
+        // TODO: there is some repetition in the following and some code inside the choose(card:) method
+        if matchIsSelected {
+            for selectedIndex in selectedCardIndicies {
+                matchedCards.append(drawnCards.remove(at: selectedIndex))
+            }
+            selectedCardIndicies = []
+        }
+    }
+    
+    private mutating func drawCards(amount: Int) {
         for _ in 0..<amount {
             if !deck.isEmpty {
                 drawnCards.append(deck.removeFirst())
