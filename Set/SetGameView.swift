@@ -28,10 +28,12 @@ struct SetGameView: View {
             Button("New Game") {
                 game.reset()
             }
+                .foregroundColor(Color.white)
             matchedCards
             
         }
-        .padding(.horizontal)
+        .padding()
+        .background(Color("FeltGreen"))
     }
     
     @ViewBuilder
@@ -103,7 +105,7 @@ struct SetGameView: View {
         static let minimumCardWidth: CGFloat = 110.0
         
         struct CardEdgeColors {
-            static let any: Color = .orange
+            static let any: Color = .accentColor
             static let selected: Color = .yellow
             static let matchedSet: Color = .red
             static let unmatchedSet: Color = .gray
@@ -114,6 +116,10 @@ struct SetGameView: View {
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         let game = SetGame()
-        return SetGameView(game: game)
+        return Group {
+            SetGameView(game: game)
+            SetGameView(game: game)
+                .previewInterfaceOrientation(InterfaceOrientation.landscapeLeft)
+        }
     }
 }
