@@ -21,69 +21,68 @@ struct SetGameView: View {
     var controls: some View {
         // TODO: this looks really weird when the device is horozontal
         HStack {
-            deck
-                .onTapGesture {
-                    game.draw()
-                }
+            deck.onTapGesture {
+                game.draw()
+            }
             Button("New Game") {
                 game.reset()
             }
-                .foregroundColor(Color.white)
             matchedCards
-            
         }
         .padding()
         .background(Color("FeltGreen"))
-    }
-    
-    @ViewBuilder
-    var matchedCards: some View {
-        if game.hasNoMatchedCards {
-            Color.clear
-                .aspectRatio(2/1, contentMode: .fit)
-        } else {
-            ZStack {
-                ForEach(game.matchedCards) { card in
-                    CardView(card: card,
-                             cardEdgeColor: DrawingConstants.CardEdgeColors.any,
-                             hasThickEdge: false)
-                }
-            }
-            .aspectRatio(2/1, contentMode: .fit)
-        }
-    }
-    
-    @ViewBuilder
-    var deck: some View {
-        // TODO: dry up the aspect ratio modifier code, move constant
-        if game.deckIsEmpty {
-            Rectangle()
-                .aspectRatio(2/1, contentMode: .fit)
-
-        } else {
-            ZStack {
-                ForEach(game.deck) { card in
-                    CardView(
-                        card: card,
-                        cardEdgeColor: DrawingConstants.CardEdgeColors.any,
-                        hasThickEdge: false,
-                        isFaceUp: false
-                    )
-                }
-            }
-            .aspectRatio(2/1, contentMode: .fit)
-
-        }
+        .foregroundColor(Color.white)
     }
     
     var playArea: some View {
-        AspectVGrid(items: game.drawnCards, aspectRatio: 2/1, minItemWidth: DrawingConstants.minimumCardWidth) { card in
+        AspectVGrid(items: game.drawnCards, aspectRatio: DrawingConstants.cardAspectRatio, minItemWidth: DrawingConstants.minimumCardWidth) { card in
             CardView(card: card, cardEdgeColor: edgeColor(for: card), hasThickEdge: game.isSelected(card: card))
                 .padding(DrawingConstants.cardPadding)
                 .onTapGesture {
                     game.choose(card: card)
                 }
         }
+    }
+    
+    
+    @ViewBuilder
+    var deck: some View {
+        // TODO: this shares quite a bit with the matchedCards, and potentially can be abstracted into a separate view
+        Group {
+            if game.deckIsEmpty {
+                Color.clear
+            } else {
+                ZStack {
+                    ForEach(game.deck) { card in
+                        CardView(
+                            card: card,
+                            cardEdgeColor: DrawingConstants.CardEdgeColors.any,
+                            hasThickEdge: false,
+                            isFaceUp: false
+                        )
+                    }
+                }
+            }
+        }
+        .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
+    }
+    
+    @ViewBuilder
+    var matchedCards: some View {
+        Group {
+            if game.hasNoMatchedCards {
+                Color.clear
+            } else {
+                ZStack {
+                    ForEach(game.matchedCards) { card in
+                        CardView(card: card,
+                                 cardEdgeColor: DrawingConstants.CardEdgeColors.any,
+                                 hasThickEdge: false)
+                    }
+                }
+            }
+        }
+        .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
     }
     
     private func edgeColor(for card: SetGame.Card) -> Color {
@@ -103,6 +102,7 @@ struct SetGameView: View {
     struct DrawingConstants {
         static let cardPadding: CGFloat = 8.0
         static let minimumCardWidth: CGFloat = 110.0
+        static let cardAspectRatio: CGFloat = 2/1
         
         struct CardEdgeColors {
             static let any: Color = .accentColor
