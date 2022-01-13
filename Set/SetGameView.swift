@@ -10,6 +10,8 @@ import SwiftUI
 struct SetGameView: View {
     @ObservedObject var game: SetGame
     
+    @State private var playCardSize: CGSize?
+    
     var body: some View {
         VStack {
             playArea
@@ -37,10 +39,18 @@ struct SetGameView: View {
     var playArea: some View {
         AspectVGrid(items: game.drawnCards, aspectRatio: DrawingConstants.cardAspectRatio, minItemWidth: DrawingConstants.minimumCardWidth) { card in
             CardView(card: card, cardEdgeColor: edgeColor(for: card), hasThickEdge: game.isSelected(card: card))
+                .background(GeometryReader { geometry in
+                    Color.clear.preference(key: PlayCardSizePreferenceKey.self, value: geometry.size)
+                })
                 .padding(DrawingConstants.cardPadding)
                 .onTapGesture {
                     game.choose(card: card)
                 }
+        }
+        .onPreferenceChange(PlayCardSizePreferenceKey.self) { playCardSize in
+            // TODO: remove logs once this is working
+            print("PlayCardSizePreferenceKey changed: \(playCardSize)")
+            self.playCardSize = playCardSize
         }
     }
     
@@ -65,6 +75,7 @@ struct SetGameView: View {
             }
         }
         .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
+        .frame(maxWidth: playCardSize?.width, maxHeight: playCardSize?.height)
     }
     
     @ViewBuilder
@@ -83,6 +94,7 @@ struct SetGameView: View {
             }
         }
         .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
+        .frame(maxWidth: playCardSize?.width, maxHeight: playCardSize?.height)
     }
     
     private func edgeColor(for card: SetGame.Card) -> Color {
