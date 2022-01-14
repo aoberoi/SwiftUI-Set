@@ -50,7 +50,9 @@ struct SetGameView: View {
             let _ = print("PlayCardSizePreferenceKey changed: \(String(describing: anchor))")
             GeometryReader { geometry in
                 let _ = updatePlayCardSize(in: geometry, with: anchor)
-                EmptyView()
+                VStack {
+                    Text(String(describing: playCardSize))
+                }
             }
         }
     }
