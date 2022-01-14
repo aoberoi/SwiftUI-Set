@@ -21,15 +21,17 @@ struct SetGameView: View {
     }
     
     var controls: some View {
-        // TODO: this looks really weird when the device is horozontal
         HStack {
             deck.onTapGesture {
                 game.draw()
             }
+            .frame(maxWidth: .infinity)
             Button("New Game") {
                 game.reset()
             }
+            .frame(maxWidth: .infinity)
             matchedCards
+                .frame(maxWidth: .infinity)
         }
         .padding()
         .background(Color("FeltGreen"))
