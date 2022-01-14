@@ -39,18 +39,26 @@ struct SetGameView: View {
     var playArea: some View {
         AspectVGrid(items: game.drawnCards, aspectRatio: DrawingConstants.cardAspectRatio, minItemWidth: DrawingConstants.minimumCardWidth) { card in
             CardView(card: card, cardEdgeColor: edgeColor(for: card), hasThickEdge: game.isSelected(card: card))
-                .background(GeometryReader { geometry in
-                    Color.clear.preference(key: PlayCardSizePreferenceKey.self, value: geometry.size)
-                })
+                .anchorPreference(key: PlayCardSizePreferenceKey.self, value: .bounds, transform: { $0 })
                 .padding(DrawingConstants.cardPadding)
                 .onTapGesture {
                     game.choose(card: card)
                 }
         }
-        .onPreferenceChange(PlayCardSizePreferenceKey.self) { playCardSize in
+        .overlayPreferenceValue(PlayCardSizePreferenceKey.self) { anchor in
             // TODO: remove logs once this is working
-            print("PlayCardSizePreferenceKey changed: \(playCardSize)")
-            self.playCardSize = playCardSize
+            let _ = print("PlayCardSizePreferenceKey changed: \(String(describing: anchor))")
+            GeometryReader { geometry in
+                let _ = updatePlayCardSize(in: geometry, with: anchor)
+                EmptyView()
+            }
+        }
+    }
+    
+    func updatePlayCardSize(in geometry:GeometryProxy, with anchor:Anchor<CGRect>?) {
+        if let anchor = anchor {
+            print("playCardSize = \(geometry[anchor].size)")
+            self.playCardSize = geometry[anchor].size
         }
     }
     
