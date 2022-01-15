@@ -99,13 +99,19 @@ struct Set {
                 }
             } else if matchIsSelected {
                 // move selected cards to the matched cards
+                // NOTE: the mutation to drawnCards will not be in-place. "holes" will be filled in with cards from the end.
                 let removedCards = drawnCards.separateElements(fromIndicies: selectedCardIndicies)
                 matchedCards.append(contentsOf: removedCards)
                 // adjust selection
                 if selectedCardIndicies.contains(cardIndex) {
                     selectedCardIndicies = []
                 } else {
-                    selectedCardIndicies = [cardIndex]
+                    // since drawnCards was just mutated, ensure that cardIndex still points to the right card
+                    if let cardIndex = drawnCards.firstIndex(where: { $0.id == card.id }) {
+                        selectedCardIndicies = [cardIndex]
+                    } else {
+                        selectedCardIndicies = []
+                    }
                 }
             } else {
                 selectedCardIndicies = [cardIndex]
