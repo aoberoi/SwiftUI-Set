@@ -241,9 +241,3 @@ struct CardView_Previews: PreviewProvider {
         }
     }
 }
-
-extension CGSize {
-    var isNotWiderThanTall: Bool {
-        height - width >= 0
-    }
-}

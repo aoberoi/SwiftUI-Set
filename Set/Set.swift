@@ -99,9 +99,8 @@ struct Set {
                 }
             } else if matchIsSelected {
                 // move selected cards to the matched cards
-                for selectedIndex in selectedCardIndicies {
-                    matchedCards.append(drawnCards.remove(at: selectedIndex))
-                }
+                let removedCards = drawnCards.separateElements(fromIndicies: selectedCardIndicies)
+                matchedCards.append(contentsOf: removedCards)
                 // adjust selection
                 if selectedCardIndicies.contains(cardIndex) {
                     selectedCardIndicies = []
@@ -122,7 +121,7 @@ struct Set {
         return selectedCardIndicies.contains(cardIndex)
     }
     
-    struct Card: Identifiable {
+    struct Card: Identifiable, Equatable {
         // TODO: This is an arbitrary way to identify cards, but it works. Ideally, the ID type would be a Tuple but
         // since Tuple's are not Hashable that doesn't work.
         var id: [TriState] {
