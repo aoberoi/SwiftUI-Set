@@ -9,20 +9,21 @@ import SwiftUI
 
 struct CardView: View {
     let card: SetGame.Card
-    let cardEdgeColor: Color
-    let hasThickEdge: Bool
+    let cardBorderColor: Color
+    let hasThickBorder: Bool
     let isFaceUp: Bool
     
-    init(card: SetGame.Card, cardEdgeColor: Color, hasThickEdge: Bool, isFaceUp: Bool = true) {
+    init(card: SetGame.Card, cardBorderColor: Color, hasThickBorder: Bool, isFaceUp: Bool = true) {
         self.card = card
-        self.cardEdgeColor = cardEdgeColor
-        self.hasThickEdge = hasThickEdge
+        self.cardBorderColor = cardBorderColor
+        self.hasThickBorder = hasThickBorder
         self.isFaceUp = isFaceUp
     }
   
     var body: some View {
         GeometryReader { geometry in
             ZStack {
+                paper(for: geometry.size)
                 border(for: geometry.size)
                 if isFaceUp {
                     symbols(for: geometry.size)
@@ -30,48 +31,45 @@ struct CardView: View {
                     cardBack(for: geometry.size)
                 }
             }
-            .contentShape(RoundedRectangle(cornerRadius: cardCornerRadius(for: geometry.size)))
         }
     }
     
-    private func cardBack(for size: CGSize) -> some View {
-        Rectangle()
-            .foregroundColor(.accentColor)
-            .padding(symbolPadding(for: size))
+    private func paper(for size: CGSize) -> some View {
+        RoundedRectangle(cornerRadius: paperCornerRadius(for: size))
+            .fill()
+            .foregroundColor(Color(UIColor.systemBackground))
     }
     
-    @ViewBuilder
     private func border(for size: CGSize) -> some View {
-        RoundedRectangle(cornerRadius: cardCornerRadius(for: size))
-            .strokeBorder(
-                cardEdgeColor,
-                style: StrokeStyle(lineWidth: edgeLineWidth(for: size))
-            )
+        RoundedRectangle(cornerRadius: borderCornerRadius(for: size))
+            .strokeBorder(cardBorderColor, lineWidth: borderLineWidth(for: size))
+            .padding(borderPadding(for: size))
     }
     
     @ViewBuilder
     private func symbols(for size: CGSize) -> some View {
         if size.isNotWiderThanTall {
             // Vertically stacked card symbols
-            VStack(spacing: DrawingConstants.symbolSpacingRatio * size.height) {
+            VStack(spacing: symbolSpacing(for: size)) {
                 ForEach(0..<numberOfSymbols) {_ in
                     symbol(for: size)
-                        .frame(maxHeight: symbolLength(for: size.height))
                 }
-            }.padding(symbolPadding(for: size))
+            }.padding(symbolSpacing(for: size) * 2)
+                
         } else {
             // Horizontally stacked card symbols
-            HStack(spacing: DrawingConstants.symbolSpacingRatio * size.width) {
+            HStack(spacing: symbolSpacing(for: size)) {
                 ForEach(0..<numberOfSymbols) {_ in
                     symbol(for: size)
-                        .frame(maxWidth: symbolLength(for: size.width))
                 }
-            }.padding(symbolPadding(for: size))
+            }.padding(symbolSpacing(for: size) * 2)
+                
         }
     }
     
     @ViewBuilder
     private func symbol(for size: CGSize) -> some View {
+        let symbolSize = symbolSize(for: size)
         Group {
             switch card.shading {
             case .first:
@@ -81,7 +79,9 @@ struct CardView: View {
             case .third:
                 openSymbol(for: size)
             }
-        }.foregroundColor(symbolColor)
+        }
+        .frame(maxWidth: symbolSize.width, maxHeight: symbolSize.height)
+        .foregroundColor(symbolColor)
     }
     
     @ViewBuilder
@@ -92,11 +92,10 @@ struct CardView: View {
         case .second:
             Rectangle()
         case .third:
-            Capsule()
+            Ellipse()
         }
     }
     
-    @ViewBuilder
     private var stripedSymbol: some View {
         solidSymbol
             .opacity(DrawingConstants.stripedOpacity)
@@ -111,8 +110,14 @@ struct CardView: View {
         case .second:
             Rectangle().strokeBorder(lineWidth: lineWidth)
         case .third:
-            Capsule().strokeBorder(lineWidth: lineWidth)
+            Ellipse().strokeBorder(lineWidth: lineWidth)
         }
+    }
+    
+    private func cardBack(for size: CGSize) -> some View {
+        Rectangle()
+            .foregroundColor(.accentColor)
+            .padding(symbolSpacing(for: size))
     }
     
     private var symbolColor: Color {
@@ -138,45 +143,59 @@ struct CardView: View {
         }
     }
     
-    private func cardCornerRadius(for size:CGSize) -> CGFloat {
+    private func paperCornerRadius(for size: CGSize) -> CGFloat {
         let shortestDimension = min(size.height, size.width)
-        return DrawingConstants.cardCornerRadiusRatio * shortestDimension
+        return DrawingConstants.paperCornerRadiusRatio * shortestDimension
     }
     
-    private func edgeLineWidth(for size:CGSize) -> CGFloat {
-        let shortestDimension = min(size.height, size.width)
-        let ratio = hasThickEdge ? DrawingConstants.thickEdgeLineWidthRatio : DrawingConstants.thinEdgeLineWidthRatio
-        return max(ratio * shortestDimension, 1.0)
+    private func borderCornerRadius(for size:CGSize) -> CGFloat {
+        paperCornerRadius(for: size) * DrawingConstants.borderDistanceFromCornerRatio
     }
     
-    private func symbolPadding(for size:CGSize) -> CGFloat {
-        let longestDimension = max(size.height, size.width)
-        return DrawingConstants.symbolPaddingRatio * longestDimension
+    private func borderPadding(for size: CGSize) -> CGFloat {
+        (paperCornerRadius(for: size) * (1 - DrawingConstants.borderDistanceFromCornerRatio)) - (0.5 * borderLineWidth(for: size))
+    }
+    
+    private func borderLineWidth(for size: CGSize) -> CGFloat {
+        let shortestDimension = min(size.height, size.width)
+        var lineWidth = max(DrawingConstants.borderLineWidthRatio * shortestDimension, 1.0)
+        lineWidth = lineWidth * (hasThickBorder ? DrawingConstants.thickBorderLineWidthMultiplier : 1.0)
+        return lineWidth
+    }
+    
+    private func symbolSpacing(for size: CGSize) -> CGFloat {
+        paperCornerRadius(for: size)
+    }
+    
+    private func symbolSize(for cardSize: CGSize) -> CGSize {
+        let symbolPadding = symbolSpacing(for: cardSize)
+        if cardSize.isNotWiderThanTall {
+            // Divide height into 3 parts with spacing
+            let height = (cardSize.height - (symbolPadding * 6)) / 3
+            let width = (cardSize.width - (symbolPadding * 4))
+            return CGSize(width: width, height: height)
+        } else {
+            // Divide width into 3 parts with spacing
+            let width = (cardSize.width - (symbolPadding * 6)) / 3
+            let height = (cardSize.height - (symbolPadding * 4))
+            return CGSize(width: width, height: height)
+        }
     }
     
     private func openSymbolLineWidth(for size: CGSize) -> CGFloat {
         let shortestDimension = min(size.height, size.width)
-        return max(DrawingConstants.openLineWidthRatio * shortestDimension, 2.0)
-    }
-    
-    private func symbolLength(for longestDimensionLength: CGFloat) -> CGFloat {
-        let padding = 2 * DrawingConstants.symbolPaddingRatio * longestDimensionLength
-        let maximumSpacing = 2 * DrawingConstants.symbolSpacingRatio * longestDimensionLength
-        return (longestDimensionLength - padding - maximumSpacing) / 3
+        return max(DrawingConstants.openSymbolLineWidthRatio * shortestDimension, 2.0)
     }
     
     private struct DrawingConstants {
-        static let cardCornerRadiusRatio: CGFloat = 0.05
+        static let paperCornerRadiusRatio: CGFloat = 0.1
         
-        static let thinEdgeLineWidthRatio: CGFloat = 0.02
-        static let thickEdgeLineWidthRatio: CGFloat = 0.05
+        static let borderDistanceFromCornerRatio: CGFloat = 0.5
+        static let borderLineWidthRatio: CGFloat = 0.02
+        static let thickBorderLineWidthMultiplier: CGFloat = 1.7
 
-        static let symbolPaddingRatio: CGFloat = 0.08
-        static let symbolSpacingRatio: CGFloat = 0.08
-        
         static let stripedOpacity: Double = 0.5
-
-        static let openLineWidthRatio: CGFloat  = 0.05
+        static let openSymbolLineWidthRatio: CGFloat  = 0.05
     }
 }
 
@@ -185,27 +204,38 @@ struct CardView_Previews: PreviewProvider {
         let card = SetGame.Card(
             cardinaity: .third,
             color: .second,
-            symbol: .first,
+            symbol: .third,
             shading: .third
         )
         return Group {
-            CardView(card: card, cardEdgeColor: .orange, hasThickEdge: false)
+            CardView(card: card, cardBorderColor: .orange, hasThickBorder: false)
+                .frame(width: 300, height: 600, alignment: .center)
+                .padding(10.0)
+                .background(.gray)
                 .previewDisplayName("Tall")
                 .previewLayout(.sizeThatFits)
-            CardView(card: card, cardEdgeColor: .orange, hasThickEdge: false)
-                .frame(width: 400, height: 400, alignment: .center)
+            CardView(card: card, cardBorderColor: .orange, hasThickBorder: false)
+                .frame(width: 300, height: 300, alignment: .center)
+                .padding(10.0)
+                .background(.gray)
                 .previewDisplayName("Square")
                 .previewLayout(.sizeThatFits)
-            CardView(card: card, cardEdgeColor: .orange, hasThickEdge: false)
+            CardView(card: card, cardBorderColor: .orange, hasThickBorder: false)
                 .frame(width: 600, height: 300, alignment: .center)
+                .padding(10.0)
+                .background(.gray)
                 .previewDisplayName("Wide")
                 .previewLayout(.sizeThatFits)
-            CardView(card: card, cardEdgeColor: .orange, hasThickEdge: false)
+            CardView(card: card, cardBorderColor: .orange, hasThickBorder: false)
                 .frame(width: 25, height: 70, alignment: .center)
+                .padding(10.0)
+                .background(.gray)
                 .previewDisplayName("Tall and small")
                 .previewLayout(.sizeThatFits)
-            CardView(card: card, cardEdgeColor: .orange, hasThickEdge: false)
+            CardView(card: card, cardBorderColor: .orange, hasThickBorder: false)
                 .frame(width: 70, height: 25, alignment: .center)
+                .padding(10.0)
+                .background(.gray)
                 .previewDisplayName("Wide and small")
                 .previewLayout(.sizeThatFits)
         }

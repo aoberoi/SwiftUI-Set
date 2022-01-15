@@ -13,11 +13,11 @@ struct SetGameView: View {
     @State private var playCardSize: CGSize?
     
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             playArea
-            Spacer()
             controls
         }
+        .background(Color(UIColor.systemGray5))
     }
     
     var controls: some View {
@@ -35,14 +35,15 @@ struct SetGameView: View {
         }
         .padding()
         .background(Color("FeltGreen"))
-        .foregroundColor(Color.white)
+        .foregroundColor(.white)
     }
     
     var playArea: some View {
         GeometryReader { geometry in
             AspectVGrid(items: game.drawnCards, aspectRatio: DrawingConstants.cardAspectRatio, minItemWidth: DrawingConstants.minimumCardWidth) { card in
-                CardView(card: card, cardEdgeColor: edgeColor(for: card), hasThickEdge: game.isSelected(card: card))
+                CardView(card: card, cardBorderColor: borderColor(for: card), hasThickBorder: game.isSelected(card: card))
                     .anchorPreference(key: PlayCardSizePreferenceKey.self, value: .bounds, transform: { $0 })
+//                  .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.1), radius: 2.0, y: 2.0)
                     .padding(DrawingConstants.cardPadding)
                     .onTapGesture {
                         game.choose(card: card)
@@ -72,8 +73,8 @@ struct SetGameView: View {
                     ForEach(game.deck) { card in
                         CardView(
                             card: card,
-                            cardEdgeColor: DrawingConstants.CardEdgeColors.any,
-                            hasThickEdge: false,
+                            cardBorderColor: DrawingConstants.CardBorderColors.any,
+                            hasThickBorder: false,
                             isFaceUp: false
                         )
                     }
@@ -93,8 +94,8 @@ struct SetGameView: View {
                 ZStack {
                     ForEach(game.matchedCards) { card in
                         CardView(card: card,
-                                 cardEdgeColor: DrawingConstants.CardEdgeColors.any,
-                                 hasThickEdge: false)
+                                 cardBorderColor: DrawingConstants.CardBorderColors.any,
+                                 hasThickBorder: false)
                     }
                 }
             }
@@ -103,17 +104,17 @@ struct SetGameView: View {
         .frame(maxWidth: playCardSize?.width, maxHeight: playCardSize?.height)
     }
     
-    private func edgeColor(for card: SetGame.Card) -> Color {
+    private func borderColor(for card: SetGame.Card) -> Color {
         if game.isSelected(card: card) {
             if game.matchIsSelected {
-                return DrawingConstants.CardEdgeColors.matchedSet
+                return DrawingConstants.CardBorderColors.matchedSet
             } else if game.numberOfSelectedCards == 3 {
-                return DrawingConstants.CardEdgeColors.unmatchedSet
+                return DrawingConstants.CardBorderColors.unmatchedSet
             } else {
-                return DrawingConstants.CardEdgeColors.selected
+                return DrawingConstants.CardBorderColors.selected
             }
         } else {
-            return DrawingConstants.CardEdgeColors.any
+            return DrawingConstants.CardBorderColors.any
         }
     }
     
@@ -122,7 +123,7 @@ struct SetGameView: View {
         static let minimumCardWidth: CGFloat = 110.0
         static let cardAspectRatio: CGFloat = 2/1
         
-        struct CardEdgeColors {
+        struct CardBorderColors {
             static let any: Color = .accentColor
             static let selected: Color = .yellow
             static let matchedSet: Color = .red
