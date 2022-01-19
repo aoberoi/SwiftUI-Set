@@ -33,7 +33,7 @@ struct SetGameView: View {
                 var delay: Double = 0
                 if game.matchIsSelected {
                     // TODO: factor out this constant
-                    delay += 0.25
+                    delay += 0.15
                     withAnimation {
                         game.discardPotentialMatch()
                     }
@@ -121,7 +121,8 @@ struct SetGameView: View {
 //                dealACard()
 //            }
 //        }
-        withAnimation(.easeInOut(duration: 1.0)) {
+        // TODO: move this constant out
+        withAnimation(.easeInOut(duration: 0.7)) {
             game.start()
         }
     }
@@ -132,7 +133,7 @@ struct SetGameView: View {
     }
     
     private func zIndex(for card: SetGame.Card) -> Double {
-        let indexInDeck = game.deck.firstIndex(where: { $0.id == card.id }) ?? 0
+        let indexInDeck = game.deck.firstIndex(where: { $0 == card }) ?? 0
         return -Double(indexInDeck)
     }
     

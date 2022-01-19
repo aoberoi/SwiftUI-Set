@@ -22,13 +22,12 @@ struct Set {
         }
         return cards.shuffled()
     }()
-    
     var drawnCards: [Card] = []
     var matchedCards: [Card] = []
-    var deckIsEmpty: Bool { deck.isEmpty }
-    var hasNoMatchedCards: Bool { matchedCards.isEmpty }
     
     var selectedCardIndicies: Swift.Set<Int> = []
+    
+    var deckIsEmpty: Bool { deck.isEmpty }
     
     public var matchIsSelected: Bool {
         guard selectedCardIndicies.count == 3 else {
@@ -95,7 +94,7 @@ struct Set {
     }
     
     public mutating func choose(card: Card) {
-        if let cardIndex = drawnCards.firstIndex(where: { $0.id == card.id }) {
+        if let cardIndex = drawnCards.firstIndex(where: { $0 == card }) {
             if selectedCardIndicies.count < 3 {
                 if selectedCardIndicies.contains(cardIndex) {
                     selectedCardIndicies.remove(cardIndex)
@@ -109,7 +108,7 @@ struct Set {
                     selectedCardIndicies = []
                 } else {
                     // since drawnCards was just mutated, ensure that cardIndex still points to the right card
-                    if let cardIndex = drawnCards.firstIndex(where: { $0.id == card.id }) {
+                    if let cardIndex = drawnCards.firstIndex(where: { $0 == card }) {
                         selectedCardIndicies = [cardIndex]
                     } else {
                         selectedCardIndicies = []
@@ -122,7 +121,7 @@ struct Set {
     }
     
     public func isSelected(card: Card) -> Bool {
-        guard let cardIndex = drawnCards.firstIndex(where: { $0.id == card.id }) else {
+        guard let cardIndex = drawnCards.firstIndex(where: { $0 == card }) else {
             return false
         }
         

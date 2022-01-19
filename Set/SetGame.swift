@@ -25,7 +25,6 @@ class SetGame : ObservableObject {
     var drawnCards: [Card] { gameModel.drawnCards }
 
     var matchedCards: [Card] { gameModel.matchedCards }
-    var hasNoMatchedCards: Bool { gameModel.hasNoMatchedCards }
     
     // TODO: the indicies could be wrong since visuallyUndealtCards were removed from the drawnCards
     var matchIsSelected: Bool { gameModel.matchIsSelected }
