@@ -17,14 +17,11 @@ class SetGame : ObservableObject {
     
 //    var deck: [Card] { visuallyUndealtCards + gameModel.deck }
 //    var deckIsEmpty: Bool { visuallyUndealtCards.isEmpty && gameModel.deckIsEmpty }
+//    var drawnCards: [Card] { gameModel.drawnCards.filter({ !visuallyUndealtCards.contains($0) }) }
     
     var deck: [Card] { gameModel.deck }
-    var deckIsEmpty: Bool { gameModel.deckIsEmpty }
-    
-//    var drawnCards: [Card] { gameModel.drawnCards.filter({ !visuallyUndealtCards.contains($0) }) }
-    var drawnCards: [Card] { gameModel.drawnCards }
-
-    var matchedCards: [Card] { gameModel.matchedCards }
+    var visibleCards: [Card] { gameModel.visibleCards }
+    var discardPile: [Card] { gameModel.discardPile }
     
     // TODO: the indicies could be wrong since visuallyUndealtCards were removed from the drawnCards
     var matchIsSelected: Bool { gameModel.matchIsSelected }

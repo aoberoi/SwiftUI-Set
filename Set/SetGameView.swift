@@ -53,7 +53,7 @@ struct SetGameView: View {
                 }
             }
             .frame(maxWidth: .infinity)
-            matchedCards
+            discardPile
                 .frame(maxWidth: .infinity)
         }
         .padding()
@@ -63,7 +63,7 @@ struct SetGameView: View {
     
     var playArea: some View {
         GeometryReader { geometry in
-            AspectVGrid(items: game.drawnCards, aspectRatio: DrawingConstants.cardAspectRatio, minItemWidth: DrawingConstants.minimumCardWidth) { card in
+            AspectVGrid(items: game.visibleCards, aspectRatio: DrawingConstants.cardAspectRatio, minItemWidth: DrawingConstants.minimumCardWidth) { card in
                 CardView(card: card, cardBorderColor: borderColor(for: card), hasThickBorder: game.isSelected(card: card))
                     .anchorPreference(key: PlayCardSizePreferenceKey.self, value: .bounds, transform: { $0 })
                     .matchedGeometryEffect(id: card.id, in: discardNamespace)
@@ -101,9 +101,9 @@ struct SetGameView: View {
     }
     
     @ViewBuilder
-    var matchedCards: some View {
+    var discardPile: some View {
         ZStack {
-            ForEach(game.matchedCards) { card in
+            ForEach(game.discardPile) { card in
                 CardView(card: card,
                          cardBorderColor: DrawingConstants.CardBorderColors.any,
                          hasThickBorder: false)
@@ -140,9 +140,9 @@ struct SetGameView: View {
     private func borderColor(for card: SetGame.Card) -> Color {
         if game.isSelected(card: card) {
             if game.matchIsSelected {
-                return DrawingConstants.CardBorderColors.matchedSet
+                return DrawingConstants.CardBorderColors.matchedSelection
             } else if game.numberOfSelectedCards == 3 {
-                return DrawingConstants.CardBorderColors.unmatchedSet
+                return DrawingConstants.CardBorderColors.unmatchedSelection
             } else {
                 return DrawingConstants.CardBorderColors.selected
             }
@@ -165,8 +165,8 @@ struct SetGameView: View {
         struct CardBorderColors {
             static let any: Color = .accentColor
             static let selected: Color = .yellow
-            static let matchedSet: Color = .red
-            static let unmatchedSet: Color = .gray
+            static let matchedSelection: Color = .red
+            static let unmatchedSelection: Color = .gray
         }
     }
     
