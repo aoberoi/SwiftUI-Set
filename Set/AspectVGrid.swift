@@ -23,14 +23,6 @@ struct AspectVGrid<Item, ItemView>: View where ItemView: View, Item: Identifiabl
                         content(item).aspectRatio(aspectRatio, contentMode: .fit)
                     }
                 }
-                    // The following modifier ensures that all "state" within the LazyVGrid is invalidated each time the items
-                    // change. This resolves an issue where the LazyVGrid was not recomputing its size when the computed grid
-                    // item width changes above. This led to instances where when the width increased, the grid did not try to
-                    // display all of the items (it didn't seem to invalidate the height and understand that there was more room).
-                    // We never really wanted the laziness of the LazyVGrid, only the adaptive column layout.
-                    // This might limit the future ability to perform animations on items.
-                    // https://swiftui-lab.com/swiftui-id/
-                    .id(items.map { $0.id })
             }
         }
     }

@@ -25,11 +25,10 @@ struct CardView: View {
             ZStack {
                 paper(for: geometry.size)
                 border(for: geometry.size)
-                if isFaceUp {
-                    symbols(for: geometry.size)
-                } else {
-                    cardBack(for: geometry.size)
-                }
+                symbols(for: geometry.size)
+                    .opacity(isFaceUp ? 1 : 0)
+                cardBack(for: geometry.size)
+                    .opacity(isFaceUp ? 0 : 1)
             }
         }
     }
@@ -43,6 +42,7 @@ struct CardView: View {
     private func border(for size: CGSize) -> some View {
         RoundedRectangle(cornerRadius: borderCornerRadius(for: size))
             .strokeBorder(cardBorderColor, lineWidth: borderLineWidth(for: size))
+            .animation(Animation.linear(duration: 0), value: cardBorderColor)
             .padding(borderPadding(for: size))
     }
     
@@ -51,7 +51,7 @@ struct CardView: View {
         if size.isNotWiderThanTall {
             // Vertically stacked card symbols
             VStack(spacing: symbolSpacing(for: size)) {
-                ForEach(0..<numberOfSymbols) {_ in
+                ForEach(0..<numberOfSymbols, id: \.self) {_ in
                     symbol(for: size)
                 }
             }.padding(symbolSpacing(for: size) * 2)
@@ -59,7 +59,7 @@ struct CardView: View {
         } else {
             // Horizontally stacked card symbols
             HStack(spacing: symbolSpacing(for: size)) {
-                ForEach(0..<numberOfSymbols) {_ in
+                ForEach(0..<numberOfSymbols, id: \.self) {_ in
                     symbol(for: size)
                 }
             }.padding(symbolSpacing(for: size) * 2)

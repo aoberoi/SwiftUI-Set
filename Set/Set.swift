@@ -66,22 +66,27 @@ struct Set {
         return true
     }
     
-    init() {
+    public mutating func start() {
         drawCards(amount: 12)
     }
     
-    public mutating func draw() {
-        drawCards(amount: 3)
-        // TODO: there is some repetition in the following and some code inside the choose(card:) method
-        if matchIsSelected {
-            for selectedIndex in selectedCardIndicies {
-                matchedCards.append(drawnCards.remove(at: selectedIndex))
-            }
+    public mutating func discardPotentialMatch(preserveSelection: Bool = false) {
+        guard matchIsSelected else { return }
+        
+        // move selected cards to the matched cards
+        let removedCards = drawnCards.separateElements(fromIndicies: selectedCardIndicies)
+        matchedCards.append(contentsOf: removedCards)
+        // deselect
+        if !preserveSelection {
             selectedCardIndicies = []
         }
     }
     
-    private mutating func drawCards(amount: Int) {
+    public mutating func drawThreeMore() {
+        drawCards(amount: 3)
+    }
+    
+    public mutating func drawCards(amount: Int) {
         for _ in 0..<amount {
             if !deck.isEmpty {
                 drawnCards.append(deck.removeFirst())
@@ -98,10 +103,7 @@ struct Set {
                     selectedCardIndicies.insert(cardIndex)
                 }
             } else if matchIsSelected {
-                // move selected cards to the matched cards
-                // NOTE: the mutation to drawnCards will not be in-place. "holes" will be filled in with cards from the end.
-                let removedCards = drawnCards.separateElements(fromIndicies: selectedCardIndicies)
-                matchedCards.append(contentsOf: removedCards)
+                discardPotentialMatch(preserveSelection: true)
                 // adjust selection
                 if selectedCardIndicies.contains(cardIndex) {
                     selectedCardIndicies = []

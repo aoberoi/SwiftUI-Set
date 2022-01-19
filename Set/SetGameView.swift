@@ -11,6 +11,8 @@ struct SetGameView: View {
     @ObservedObject var game: SetGame
     
     @State private var playCardSize: CGSize?
+    @Namespace private var dealingNamespace
+    @Namespace private var discardNamespace
     
     var body: some View {
         VStack(spacing: 0) {
@@ -18,16 +20,37 @@ struct SetGameView: View {
             controls
         }
         .background(Color(UIColor.systemGray5))
+        .onAppear {
+            print("dealingNamespace: \(String(describing: dealingNamespace))")
+            print("discardNamespace: \(String(describing: discardNamespace))")
+            dealInitialCards()
+        }
     }
     
     var controls: some View {
         HStack {
             deck.onTapGesture {
-                game.draw()
+                var delay: Double = 0
+                if game.matchIsSelected {
+                    // TODO: factor out this constant
+                    delay += 0.25
+                    withAnimation {
+                        game.discardPotentialMatch()
+                    }
+                }
+                withAnimation(.easeInOut.delay(delay)) {
+                    game.draw()
+                }
             }
             .frame(maxWidth: .infinity)
             Button("New Game") {
-                game.reset()
+                withAnimation {
+                    game.reset()
+                }
+                // TODO: factor out this constant
+                withAnimation(.easeInOut.delay(1.0)) {
+                    dealInitialCards()
+                }
             }
             .frame(maxWidth: .infinity)
             matchedCards
@@ -43,11 +66,14 @@ struct SetGameView: View {
             AspectVGrid(items: game.drawnCards, aspectRatio: DrawingConstants.cardAspectRatio, minItemWidth: DrawingConstants.minimumCardWidth) { card in
                 CardView(card: card, cardBorderColor: borderColor(for: card), hasThickBorder: game.isSelected(card: card))
                     .anchorPreference(key: PlayCardSizePreferenceKey.self, value: .bounds, transform: { $0 })
-//                  .shadow(color: Color(.sRGBLinear, white: 0, opacity: 0.1), radius: 2.0, y: 2.0)
-                    .padding(DrawingConstants.cardPadding)
+                    .matchedGeometryEffect(id: card.id, in: discardNamespace)
+                    .matchedGeometryEffect(id: card.id, in: dealingNamespace)
                     .onTapGesture {
-                        game.choose(card: card)
+                        withAnimation {
+                            game.choose(card: card)
+                        }
                     }
+                    .padding(DrawingConstants.cardPadding)
             }
             .onPreferenceChange(PlayCardSizePreferenceKey.self) { anchor in
                 updatePlayCardSize(in: geometry, with: anchor)
@@ -55,30 +81,19 @@ struct SetGameView: View {
         }
     }
     
-    func updatePlayCardSize(in geometry:GeometryProxy, with anchor:Anchor<CGRect>?) {
-        if let anchor = anchor {
-            self.playCardSize = geometry[anchor].size
-        }
-    }
-    
-    
     @ViewBuilder
     var deck: some View {
         // TODO: this shares quite a bit with the matchedCards, and potentially can be abstracted into a separate view
-        Group {
-            if game.deckIsEmpty {
-                Color.clear
-            } else {
-                ZStack {
-                    ForEach(game.deck) { card in
-                        CardView(
-                            card: card,
-                            cardBorderColor: DrawingConstants.CardBorderColors.any,
-                            hasThickBorder: false,
-                            isFaceUp: false
-                        )
-                    }
-                }
+        ZStack {
+            ForEach(game.deck) { card in
+                CardView(
+                    card: card,
+                    cardBorderColor: DrawingConstants.CardBorderColors.any,
+                    hasThickBorder: false,
+                    isFaceUp: false
+                )
+                    .matchedGeometryEffect(id: card.id, in: dealingNamespace)
+                    .zIndex(zIndex(for: card))
             }
         }
         .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
@@ -87,21 +102,38 @@ struct SetGameView: View {
     
     @ViewBuilder
     var matchedCards: some View {
-        Group {
-            if game.hasNoMatchedCards {
-                Color.clear
-            } else {
-                ZStack {
-                    ForEach(game.matchedCards) { card in
-                        CardView(card: card,
-                                 cardBorderColor: DrawingConstants.CardBorderColors.any,
-                                 hasThickBorder: false)
-                    }
-                }
+        ZStack {
+            ForEach(game.matchedCards) { card in
+                CardView(card: card,
+                         cardBorderColor: DrawingConstants.CardBorderColors.any,
+                         hasThickBorder: false)
+                    .matchedGeometryEffect(id: card.id, in: discardNamespace)
+                // TODO: what's up with the ordering here?
             }
         }
         .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
         .frame(maxWidth: playCardSize?.width, maxHeight: playCardSize?.height)
+    }
+    
+    private func dealInitialCards() {
+//        game.start { index, dealACard in
+//            withAnimation(dealingAnimation(for: index)) {
+//                dealACard()
+//            }
+//        }
+        withAnimation(.easeInOut(duration: 1.0)) {
+            game.start()
+        }
+    }
+    
+    private func dealingAnimation(for index: Int) -> Animation {
+        let delay = AnimationConstants.dealDelayPerCard * Double(index)
+        return Animation.easeInOut(duration: AnimationConstants.dealACardDuration).delay(delay)
+    }
+    
+    private func zIndex(for card: SetGame.Card) -> Double {
+        let indexInDeck = game.deck.firstIndex(where: { $0.id == card.id }) ?? 0
+        return -Double(indexInDeck)
     }
     
     private func borderColor(for card: SetGame.Card) -> Color {
@@ -118,6 +150,12 @@ struct SetGameView: View {
         }
     }
     
+    private func updatePlayCardSize(in geometry:GeometryProxy, with anchor:Anchor<CGRect>?) {
+        if let anchor = anchor {
+            self.playCardSize = geometry[anchor].size
+        }
+    }
+    
     struct DrawingConstants {
         static let cardPadding: CGFloat = 8.0
         static let minimumCardWidth: CGFloat = 110.0
@@ -129,6 +167,11 @@ struct SetGameView: View {
             static let matchedSet: Color = .red
             static let unmatchedSet: Color = .gray
         }
+    }
+    
+    struct AnimationConstants {
+        static let dealACardDuration: Double = 0.25
+        static let dealDelayPerCard: Double = 0.25
     }
 }
 
