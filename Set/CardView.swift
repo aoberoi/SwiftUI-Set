@@ -133,7 +133,7 @@ struct CardView: View {
     
     
     private var numberOfSymbols: Int {
-        switch card.cardinaity {
+        switch card.cardinality {
         case .first:
             return 1
         case .second:
@@ -202,7 +202,7 @@ struct CardView: View {
 struct CardView_Previews: PreviewProvider {
     static var previews: some View {
         let card = SetGame.Card(
-            cardinaity: .third,
+            cardinality: .third,
             color: .second,
             symbol: .third,
             shading: .third

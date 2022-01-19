@@ -22,7 +22,7 @@ struct Set {
         
         // Checking for a match by eliminating mismatches that have a TriState with two of the same value and one different value
         // Cardinality
-        let cardinalities = selectedCards.map { $0.cardinaity }
+        let cardinalities = selectedCards.map { $0.cardinality }
         let cardinalityCounts = TriState.stateCounts(in: cardinalities)
         if (TriState.hasTwoOfAnyState(in: cardinalityCounts)) {
             return false
@@ -107,7 +107,7 @@ struct Set {
             for color in TriState.allCases {
                 for symbol in TriState.allCases {
                     for shading in TriState.allCases {
-                        cards.append(Card(cardinaity: cardinality, color: color, symbol: symbol, shading: shading))
+                        cards.append(Card(cardinality: cardinality, color: color, symbol: symbol, shading: shading))
                     }
                 }
             }
@@ -119,10 +119,10 @@ struct Set {
         // TODO: This is an arbitrary way to identify cards, but it works. Ideally, the ID type would be a Tuple but
         // since Tuple's are not Hashable that doesn't work.
         var id: [TriState] {
-            [cardinaity, color, symbol, shading]
+            [cardinality, color, symbol, shading]
         }
 
-        let cardinaity: TriState
+        let cardinality: TriState
         let color: TriState
         let symbol: TriState
         let shading: TriState
