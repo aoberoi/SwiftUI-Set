@@ -65,7 +65,7 @@ struct SetGameView: View {
         GeometryReader { geometry in
             AspectVGrid(items: game.visibleCards, aspectRatio: DrawingConstants.cardAspectRatio, minItemWidth: DrawingConstants.minimumCardWidth) { card in
                 CardView(card: card, cardBorderColor: borderColor(for: card), hasThickBorder: game.isSelected(card: card))
-                    .anchorPreference(key: PlayCardSizePreferenceKey.self, value: .bounds, transform: { $0 })
+                    .anchorPreference(key: PlayCardSizePreferenceKey.self, value: .bounds, transform: { geometry[$0].size })
                     .matchedGeometryEffect(id: card.id, in: discardNamespace)
                     .matchedGeometryEffect(id: card.id, in: dealingNamespace)
                     .onTapGesture {
@@ -75,9 +75,7 @@ struct SetGameView: View {
                     }
                     .padding(DrawingConstants.cardPadding)
             }
-            .onPreferenceChange(PlayCardSizePreferenceKey.self) { anchor in
-                updatePlayCardSize(in: geometry, with: anchor)
-            }
+            .onPreferenceChange(PlayCardSizePreferenceKey.self) { playCardSize = $0 }
         }
     }
     
@@ -108,7 +106,6 @@ struct SetGameView: View {
                          cardBorderColor: DrawingConstants.CardBorderColors.any,
                          hasThickBorder: false)
                     .matchedGeometryEffect(id: card.id, in: discardNamespace)
-                // TODO: what's up with the ordering here?
             }
         }
         .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
@@ -148,12 +145,6 @@ struct SetGameView: View {
             }
         } else {
             return DrawingConstants.CardBorderColors.any
-        }
-    }
-    
-    private func updatePlayCardSize(in geometry:GeometryProxy, with anchor:Anchor<CGRect>?) {
-        if let anchor = anchor {
-            self.playCardSize = geometry[anchor].size
         }
     }
     

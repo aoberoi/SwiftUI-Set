@@ -11,4 +11,8 @@ extension CGSize {
     var isNotWiderThanTall: Bool {
         height - width >= 0
     }
+    
+    var area: Double {
+        height * width
+    }
 }
