@@ -25,7 +25,7 @@ class SetGame : ObservableObject {
     
     // TODO: the indicies could be wrong since visuallyUndealtCards were removed from the drawnCards
     var matchIsSelected: Bool { gameModel.matchIsSelected }
-    var numberOfSelectedCards: Int { gameModel.selectedCardIndicies.count }
+    var numberOfSelectedCards: Int { gameModel.selectedCards.count }
     
     // MARK: Intents
     

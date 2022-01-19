@@ -10,7 +10,6 @@
 		924B3CF326CE3A8500D7A8F0 /* AspectVGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 924B3CF226CE3A8500D7A8F0 /* AspectVGrid.swift */; };
 		92AEF2C92790DAA80077EBA5 /* PlayCardSizePreferenceKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AEF2C82790DAA80077EBA5 /* PlayCardSizePreferenceKey.swift */; };
 		92AEF2CB2792C92E0077EBA5 /* Extensions_CoreGraphics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AEF2CA2792C92E0077EBA5 /* Extensions_CoreGraphics.swift */; };
-		92AEF2CD2792CA760077EBA5 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AEF2CC2792CA760077EBA5 /* Extensions.swift */; };
 		92D7292C26BE079D008E7FDE /* SetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D7292B26BE079D008E7FDE /* SetApp.swift */; };
 		92D7292E26BE079D008E7FDE /* SetGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D7292D26BE079D008E7FDE /* SetGameView.swift */; };
 		92D7293026BE079F008E7FDE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 92D7292F26BE079F008E7FDE /* Assets.xcassets */; };
@@ -26,7 +25,6 @@
 		924B3CF226CE3A8500D7A8F0 /* AspectVGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AspectVGrid.swift; sourceTree = "<group>"; };
 		92AEF2C82790DAA80077EBA5 /* PlayCardSizePreferenceKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayCardSizePreferenceKey.swift; sourceTree = "<group>"; };
 		92AEF2CA2792C92E0077EBA5 /* Extensions_CoreGraphics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions_CoreGraphics.swift; sourceTree = "<group>"; };
-		92AEF2CC2792CA760077EBA5 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		92D7292826BE079D008E7FDE /* Set.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Set.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		92D7292B26BE079D008E7FDE /* SetApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetApp.swift; sourceTree = "<group>"; };
 		92D7292D26BE079D008E7FDE /* SetGameView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetGameView.swift; sourceTree = "<group>"; };
@@ -79,7 +77,6 @@
 				92D7293E26BE116F008E7FDE /* SetGame.swift */,
 				92D7293C26BE113C008E7FDE /* Set.swift */,
 				92D7294226C32748008E7FDE /* TriState.swift */,
-				92AEF2CC2792CA760077EBA5 /* Extensions.swift */,
 				92AEF2CA2792C92E0077EBA5 /* Extensions_CoreGraphics.swift */,
 				92D7292F26BE079F008E7FDE /* Assets.xcassets */,
 				92D7293426BE079F008E7FDE /* Info.plist */,
@@ -174,7 +171,6 @@
 				92D7294326C32748008E7FDE /* TriState.swift in Sources */,
 				92AEF2CB2792C92E0077EBA5 /* Extensions_CoreGraphics.swift in Sources */,
 				92D7293D26BE113C008E7FDE /* Set.swift in Sources */,
-				92AEF2CD2792CA760077EBA5 /* Extensions.swift in Sources */,
 				92D7294126C0922B008E7FDE /* CardView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

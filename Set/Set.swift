@@ -13,16 +13,14 @@ struct Set {
     var visibleCards: [Card] = []
     var discardPile: [Card] = []
     
-    var selectedCardIndicies: Swift.Set<Int> = []
+    var selectedCards: Swift.Set<Card> = []
 
     public var matchIsSelected: Bool {
-        guard selectedCardIndicies.count == 3 else {
+        guard selectedCards.count == 3 else {
             return false
         }
         
         // Checking for a match by eliminating mismatches that have a TriState with two of the same value and one different value
-        let selectedCards = selectedCardIndicies.map { visibleCards[$0] }
-        
         // Cardinality
         let cardinalities = selectedCards.map { $0.cardinaity }
         let cardinalityCounts = TriState.stateCounts(in: cardinalities)
@@ -55,16 +53,14 @@ struct Set {
         drawCards(amount: 12)
     }
     
-    public mutating func discardPotentialMatch(preserveSelection: Bool = false) {
+    public mutating func discardPotentialMatch() {
         guard matchIsSelected else { return }
         
         // move selected cards to the matched cards
-        let removedCards = visibleCards.separateElements(fromIndicies: selectedCardIndicies)
-        discardPile.append(contentsOf: removedCards)
+        visibleCards.removeAll { selectedCards.contains($0) }
+        discardPile.append(contentsOf: selectedCards)
         // deselect
-        if !preserveSelection {
-            selectedCardIndicies = []
-        }
+        selectedCards = []
     }
     
     public mutating func drawThreeMore() {
@@ -80,38 +76,29 @@ struct Set {
     }
     
     public mutating func choose(card: Card) {
-        if let cardIndex = visibleCards.firstIndex(where: { $0 == card }) {
-            if selectedCardIndicies.count < 3 {
-                if selectedCardIndicies.contains(cardIndex) {
-                    selectedCardIndicies.remove(cardIndex)
-                } else {
-                    selectedCardIndicies.insert(cardIndex)
-                }
-            } else if matchIsSelected {
-                discardPotentialMatch(preserveSelection: true)
-                // adjust selection
-                if selectedCardIndicies.contains(cardIndex) {
-                    selectedCardIndicies = []
-                } else {
-                    // since drawnCards was just mutated, ensure that cardIndex still points to the right card
-                    if let cardIndex = visibleCards.firstIndex(where: { $0 == card }) {
-                        selectedCardIndicies = [cardIndex]
-                    } else {
-                        selectedCardIndicies = []
-                    }
-                }
+        guard visibleCards.contains(card) else { return }
+        
+        if selectedCards.count < 3 {
+            if selectedCards.contains(card) {
+                selectedCards.remove(card)
             } else {
-                selectedCardIndicies = [cardIndex]
+                selectedCards.insert(card)
             }
+        } else if matchIsSelected {
+            discardPotentialMatch()
+            // adjust selection
+            if visibleCards.contains(card) {
+                selectedCards = [card]
+            } else {
+                selectedCards = []
+            }
+        } else {
+            selectedCards = [card]
         }
     }
     
     public func isSelected(card: Card) -> Bool {
-        guard let cardIndex = visibleCards.firstIndex(where: { $0 == card }) else {
-            return false
-        }
-        
-        return selectedCardIndicies.contains(cardIndex)
+        selectedCards.contains(card)
     }
     
     static private func generateDeck() -> [Card] {
@@ -128,7 +115,7 @@ struct Set {
         return cards.shuffled()
     }
     
-    struct Card: Identifiable, Equatable {
+    struct Card: Identifiable, Hashable {
         // TODO: This is an arbitrary way to identify cards, but it works. Ideally, the ID type would be a Tuple but
         // since Tuple's are not Hashable that doesn't work.
         var id: [TriState] {
