@@ -114,8 +114,8 @@ struct SetGameView: View {
                     .zIndex(zIndex(for: card))
             }
         }
-        .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
         .frame(maxWidth: playCardSize?.width, maxHeight: playCardSize?.height)
+        .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
     }
     
     @ViewBuilder
@@ -128,8 +128,8 @@ struct SetGameView: View {
                     .matchedGeometryEffect(id: card.id, in: discardNamespace)
             }
         }
-        .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
         .frame(maxWidth: playCardSize?.width, maxHeight: playCardSize?.height)
+        .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
     }
     
     private func dealInitialCards() {
