@@ -92,7 +92,7 @@ struct CardView: View {
         case .second:
             Rectangle()
         case .third:
-            Ellipse()
+            Capsule()
         }
     }
     
@@ -110,7 +110,7 @@ struct CardView: View {
         case .second:
             Rectangle().strokeBorder(lineWidth: lineWidth)
         case .third:
-            Ellipse().strokeBorder(lineWidth: lineWidth)
+            Capsule().strokeBorder(lineWidth: lineWidth)
         }
     }
     
