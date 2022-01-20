@@ -3,13 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
 		924B3CF326CE3A8500D7A8F0 /* AspectVGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 924B3CF226CE3A8500D7A8F0 /* AspectVGrid.swift */; };
 		92AEF2C92790DAA80077EBA5 /* PlayCardSizePreferenceKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AEF2C82790DAA80077EBA5 /* PlayCardSizePreferenceKey.swift */; };
 		92AEF2CB2792C92E0077EBA5 /* Extensions_CoreGraphics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AEF2CA2792C92E0077EBA5 /* Extensions_CoreGraphics.swift */; };
+		92AEF2D02798D7180077EBA5 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 92AEF2CF2798D7180077EBA5 /* Algorithms */; };
 		92D7292C26BE079D008E7FDE /* SetApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D7292B26BE079D008E7FDE /* SetApp.swift */; };
 		92D7292E26BE079D008E7FDE /* SetGameView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D7292D26BE079D008E7FDE /* SetGameView.swift */; };
 		92D7293026BE079F008E7FDE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 92D7292F26BE079F008E7FDE /* Assets.xcassets */; };
@@ -43,6 +44,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				92AEF2D02798D7180077EBA5 /* Algorithms in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -109,6 +111,9 @@
 			dependencies = (
 			);
 			name = Set;
+			packageProductDependencies = (
+				92AEF2CF2798D7180077EBA5 /* Algorithms */,
+			);
 			productName = Set;
 			productReference = 92D7292826BE079D008E7FDE /* Set.app */;
 			productType = "com.apple.product-type.application";
@@ -136,6 +141,9 @@
 				Base,
 			);
 			mainGroup = 92D7291F26BE079D008E7FDE;
+			packageReferences = (
+				92AEF2CE2798D7180077EBA5 /* XCRemoteSwiftPackageReference "swift-algorithms" */,
+			);
 			productRefGroup = 92D7292926BE079D008E7FDE /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -360,6 +368,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		92AEF2CE2798D7180077EBA5 /* XCRemoteSwiftPackageReference "swift-algorithms" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-algorithms.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		92AEF2CF2798D7180077EBA5 /* Algorithms */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 92AEF2CE2798D7180077EBA5 /* XCRemoteSwiftPackageReference "swift-algorithms" */;
+			productName = Algorithms;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 92D7292026BE079D008E7FDE /* Project object */;
 }

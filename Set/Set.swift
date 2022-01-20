@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Algorithms
 
 struct Set {
     
@@ -14,43 +15,17 @@ struct Set {
     var discardPile: [Card] = []
     
     var selectedCards: Swift.Set<Card> = []
-
-    public var matchIsSelected: Bool {
-        guard selectedCards.count == 3 else {
-            return false
-        }
-        
-        // Checking for a match by eliminating mismatches that have a TriState with two of the same value and one different value
-        // Cardinality
-        let cardinalities = selectedCards.map { $0.cardinality }
-        let cardinalityCounts = TriState.stateCounts(in: cardinalities)
-        if (TriState.hasTwoOfAnyState(in: cardinalityCounts)) {
-            return false
-        }
-        // Color
-        let colors = selectedCards.map { $0.color }
-        let colorCounts = TriState.stateCounts(in: colors)
-        if (TriState.hasTwoOfAnyState(in: colorCounts)) {
-            return false
-        }
-        // Symbol
-        let symbols = selectedCards.map { $0.symbol }
-        let symbolCounts = TriState.stateCounts(in: symbols)
-        if (TriState.hasTwoOfAnyState(in: symbolCounts)) {
-            return false
-        }
-        // Shading
-        let shadings = selectedCards.map { $0.shading }
-        let shadingCounts = TriState.stateCounts(in: shadings)
-        if (TriState.hasTwoOfAnyState(in: shadingCounts)) {
-            return false
-        }
-        
-        return true
+    
+    var availableMatchingSelection: Swift.Set<Card>? {
+        Set.findMatch(in: visibleCards)
     }
     
     public mutating func start() {
         drawCards(amount: 12)
+    }
+    
+    public var matchIsSelected: Bool {
+        Set.isMatch(cards: Array(selectedCards))
     }
     
     public mutating func discardPotentialMatch() {
@@ -61,6 +36,8 @@ struct Set {
         discardPile.append(contentsOf: selectedCards)
         // deselect
         selectedCards = []
+        
+        printHint()
     }
     
     public mutating func drawThreeMore() {
@@ -73,6 +50,8 @@ struct Set {
                 visibleCards.append(deck.removeFirst())
             }
         }
+        
+        printHint()
     }
     
     public mutating func choose(card: Card) {
@@ -101,6 +80,16 @@ struct Set {
         selectedCards.contains(card)
     }
     
+    private func printHint() {
+        // Find a set and print out the indexes
+        if let cards = availableMatchingSelection {
+            let indicies = cards.map({ visibleCards.firstIndex(of: $0)! })
+            print("HINT: \(String(describing: indicies))")
+        } else {
+            print("HINT: Draw")
+        }
+    }
+    
     static private func generateDeck() -> [Card] {
         var cards: [Card] = []
         for cardinality in TriState.allCases {
@@ -113,6 +102,47 @@ struct Set {
             }
         }
         return cards.shuffled()
+    }
+    
+    static private func findMatch(in cards: [Card]) -> Swift.Set<Card>? {
+        for potentialMatch in cards.combinations(ofCount: 3) {
+            if Set.isMatch(cards: potentialMatch) {
+                return Swift.Set(potentialMatch)
+            }
+        }
+        return nil
+    }
+    
+    static private func isMatch<Cards: Collection>(cards: Cards) -> Bool where Cards.Element == Card {
+        guard cards.count == 3 else { return false }
+        
+        // Checking for a match by eliminating mismatches that have a TriState with two of the same value and one different value
+        // Cardinality
+        let cardinalities = cards.map { $0.cardinality }
+        let cardinalityCounts = TriState.stateCounts(in: cardinalities)
+        if (TriState.hasTwoOfAnyState(in: cardinalityCounts)) {
+            return false
+        }
+        // Color
+        let colors = cards.map { $0.color }
+        let colorCounts = TriState.stateCounts(in: colors)
+        if (TriState.hasTwoOfAnyState(in: colorCounts)) {
+            return false
+        }
+        // Symbol
+        let symbols = cards.map { $0.symbol }
+        let symbolCounts = TriState.stateCounts(in: symbols)
+        if (TriState.hasTwoOfAnyState(in: symbolCounts)) {
+            return false
+        }
+        // Shading
+        let shadings = cards.map { $0.shading }
+        let shadingCounts = TriState.stateCounts(in: shadings)
+        if (TriState.hasTwoOfAnyState(in: shadingCounts)) {
+            return false
+        }
+        
+        return true
     }
     
     struct Card: Identifiable, Hashable {

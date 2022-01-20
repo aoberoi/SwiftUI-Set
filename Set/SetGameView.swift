@@ -16,13 +16,14 @@ struct SetGameView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            playArea
+            ZStack {
+                playArea
+                endGame
+            }
             controls
         }
         .background(Color(UIColor.systemGray5))
         .onAppear {
-            print("dealingNamespace: \(String(describing: dealingNamespace))")
-            print("discardNamespace: \(String(describing: discardNamespace))")
             dealInitialCards()
         }
     }
@@ -76,6 +77,21 @@ struct SetGameView: View {
                     .padding(DrawingConstants.cardPadding)
             }
             .onPreferenceChange(PlayCardSizePreferenceKey.self) { playCardSize = $0 }
+        }
+    }
+    
+    @ViewBuilder
+    var endGame: some View {
+        if game.isOver {
+            VStack {
+                Text("Game Over")
+                    .font(.title)
+                    .padding()
+                Text("**Total matched sets:** \(game.totalMatchedSets)")
+                    .padding()
+            }
+            .padding()
+            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8.0))
         }
     }
     
