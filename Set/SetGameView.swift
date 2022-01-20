@@ -64,7 +64,12 @@ struct SetGameView: View {
     
     var playArea: some View {
         GeometryReader { geometry in
-            AspectVGrid(items: game.visibleCards, aspectRatio: DrawingConstants.cardAspectRatio, minItemWidth: DrawingConstants.minimumCardWidth) { card in
+            AspectVGrid(
+                items: game.visibleCards,
+                aspectRatio: DrawingConstants.cardAspectRatio,
+                minItemWidth: DrawingConstants.minimumCardWidth,
+                itemSpacing: DrawingConstants.cardPadding
+            ) { card in
                 CardView(card: card, cardBorderColor: borderColor(for: card), hasThickBorder: game.isSelected(card: card))
                     .anchorPreference(key: PlayCardSizePreferenceKey.self, value: .bounds, transform: { geometry[$0].size })
                     .matchedGeometryEffect(id: card.id, in: discardNamespace)
@@ -74,7 +79,6 @@ struct SetGameView: View {
                             game.choose(card: card)
                         }
                     }
-                    .padding(DrawingConstants.cardPadding)
             }
             .onPreferenceChange(PlayCardSizePreferenceKey.self) { playCardSize = $0 }
         }
@@ -166,7 +170,7 @@ struct SetGameView: View {
     
     struct DrawingConstants {
         static let cardPadding: CGFloat = 8.0
-        static let minimumCardWidth: CGFloat = 110.0
+        static let minimumCardWidth: CGFloat = 100.0
         static let cardAspectRatio: CGFloat = 2/1
         
         struct CardBorderColors {
