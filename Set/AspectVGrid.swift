@@ -25,6 +25,7 @@ struct AspectVGrid<Item, ItemView>: View where ItemView: View, Item: Identifiabl
                     }
                 }
                 .padding(itemSpacing)
+                .frame(minHeight: geometry.size.height)
             }
         }
     }
