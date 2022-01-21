@@ -69,17 +69,7 @@ struct SetGameView: View {
                 aspectRatio: DrawingConstants.cardAspectRatio,
                 minItemWidth: DrawingConstants.minimumCardWidth,
                 itemSpacing: DrawingConstants.cardPadding
-            ) { card in
-                CardView(card: card, cardBorderColor: borderColor(for: card), hasThickBorder: game.isSelected(card: card))
-                    .anchorPreference(key: PlayCardSizePreferenceKey.self, value: .bounds, transform: { geometry[$0].size })
-                    .matchedGeometryEffect(id: card.id, in: discardNamespace)
-                    .matchedGeometryEffect(id: card.id, in: dealingNamespace)
-                    .onTapGesture {
-                        withAnimation {
-                            game.choose(card: card)
-                        }
-                    }
-            }
+            ) { cardView(for: $0, in: geometry) }
             .onPreferenceChange(PlayCardSizePreferenceKey.self) { playCardSize = $0 }
         }
     }
@@ -91,7 +81,7 @@ struct SetGameView: View {
                 Text("Game Over")
                     .font(.title)
                     .padding()
-                Text("**Total matched sets:** \(game.totalMatchedSets)")
+                Text("**Total matched cards:** \(game.totalMatchedCards)")
                     .padding()
             }
             .padding()
@@ -132,6 +122,19 @@ struct SetGameView: View {
         .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
     }
     
+    private func cardView(for card: SetGame.Card, in geometry: GeometryProxy) -> some View {
+        let selectionState = game.selectionState(for: card)
+        return CardView(card: card, cardBorderColor: borderColor(in: selectionState), hasThickBorder: selectionState.inSelection)
+            .anchorPreference(key: PlayCardSizePreferenceKey.self, value: .bounds, transform: { geometry[$0].size })
+            .matchedGeometryEffect(id: card.id, in: discardNamespace)
+            .matchedGeometryEffect(id: card.id, in: dealingNamespace)
+            .onTapGesture {
+                withAnimation {
+                    game.choose(card: card)
+                }
+            }
+    }
+    
     private func dealInitialCards() {
 //        game.start { index, dealACard in
 //            withAnimation(dealingAnimation(for: index)) {
@@ -154,17 +157,16 @@ struct SetGameView: View {
         return -Double(indexInDeck)
     }
     
-    private func borderColor(for card: SetGame.Card) -> Color {
-        if game.isSelected(card: card) {
-            if game.matchIsSelected {
-                return DrawingConstants.CardBorderColors.matchedSelection
-            } else if game.numberOfSelectedCards == 3 {
-                return DrawingConstants.CardBorderColors.unmatchedSelection
-            } else {
-                return DrawingConstants.CardBorderColors.selected
-            }
-        } else {
+    private func borderColor(in selectionState: SetGame.CardSelectionState) -> Color {
+        switch selectionState {
+        case .unselected:
             return DrawingConstants.CardBorderColors.any
+        case .partOfIncomplete:
+            return DrawingConstants.CardBorderColors.selected
+        case .partOfMismatch:
+            return DrawingConstants.CardBorderColors.mismatchedSelection
+        case .partOfMatch:
+            return DrawingConstants.CardBorderColors.matchedSelection
         }
     }
     
@@ -177,7 +179,7 @@ struct SetGameView: View {
             static let any: Color = .accentColor
             static let selected: Color = .yellow
             static let matchedSelection: Color = .red
-            static let unmatchedSelection: Color = .gray
+            static let mismatchedSelection: Color = .gray
         }
     }
     

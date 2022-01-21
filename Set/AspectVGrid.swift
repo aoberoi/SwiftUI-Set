@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-struct AspectVGrid<Item, ItemView>: View where ItemView: View, Item: Identifiable {
+struct AspectVGrid<Item: Identifiable, ItemView: View>: View {
     let items: [Item]
     let aspectRatio: CGFloat
     let minItemWidth: CGFloat

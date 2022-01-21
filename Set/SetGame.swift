@@ -25,9 +25,27 @@ class SetGame : ObservableObject {
     
     // TODO: the indicies could be wrong since visuallyUndealtCards were removed from the drawnCards
     var matchIsSelected: Bool { gameModel.matchIsSelected }
-    var numberOfSelectedCards: Int { gameModel.selectedCards.count }
-    var totalMatchedSets: Int { gameModel.discardPile.count / 3 }
-    var isOver: Bool { gameModel.deck.isEmpty && gameModel.availableMatchingSelection == nil }
+    var totalMatchedCards: Int { gameModel.discardPile.count }
+    var isOver: Bool { gameModel.isOver }
+    
+    func selectionState(for card: Card) -> CardSelectionState {
+        guard gameModel.isSelected(card: card) else { return .unselected }
+        guard gameModel.selectionIsComplete else { return .partOfIncomplete }
+        
+        if gameModel.matchIsSelected {
+            return .partOfMatch
+        }
+        return .partOfMismatch
+    }
+    
+    enum CardSelectionState {
+        case unselected, partOfIncomplete, partOfMatch, partOfMismatch
+        
+        var inSelection: Bool {
+            self != .unselected
+        }
+    }
+    
     
     // MARK: Intents
     
@@ -61,11 +79,6 @@ class SetGame : ObservableObject {
         guard !isOver else { return }
         gameModel.choose(card: card)
     }
-    
-    func isSelected(card: Card) -> Bool {
-        gameModel.isSelected(card: card)
-    }
-    
     
 //    struct DealActions: Sequence, IteratorProtocol {
 //        mutating func next() -> (() -> Void)? {

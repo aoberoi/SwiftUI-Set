@@ -14,18 +14,30 @@ struct Set {
     var visibleCards: [Card] = []
     var discardPile: [Card] = []
     
-    var selectedCards: Swift.Set<Card> = []
+    private var selectedCards: Swift.Set<Card> = []
     
-    var availableMatchingSelection: Swift.Set<Card>? {
+    public var selectionIsComplete: Bool {
+        selectedCards.count == 3
+    }
+    
+    public var matchIsSelected: Bool {
+        Set.isMatch(cards: Array(selectedCards))
+    }
+    
+    public func isSelected(card: Card) -> Bool {
+        selectedCards.contains(card)
+    }
+    
+    public var isOver: Bool {
+        deck.isEmpty && availableMatchingSelection == nil
+    }
+    
+    private var availableMatchingSelection: Swift.Set<Card>? {
         Set.findMatch(in: visibleCards)
     }
     
     public mutating func start() {
         drawCards(amount: 12)
-    }
-    
-    public var matchIsSelected: Bool {
-        Set.isMatch(cards: Array(selectedCards))
     }
     
     public mutating func discardPotentialMatch() {
@@ -75,11 +87,7 @@ struct Set {
             selectedCards = [card]
         }
     }
-    
-    public func isSelected(card: Card) -> Bool {
-        selectedCards.contains(card)
-    }
-    
+
     private func printHint() {
         // Find a set and print out the indexes
         if let cards = availableMatchingSelection {
