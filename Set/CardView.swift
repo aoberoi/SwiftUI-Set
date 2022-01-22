@@ -42,7 +42,7 @@ struct CardView: View {
     private func border(for size: CGSize) -> some View {
         RoundedRectangle(cornerRadius: borderCornerRadius(for: size))
             .strokeBorder(cardBorderColor, lineWidth: borderLineWidth(for: size))
-            .animation(Animation.linear(duration: 0), value: cardBorderColor)
+            .animation(.none, value: cardBorderColor)
             .padding(borderPadding(for: size))
     }
     

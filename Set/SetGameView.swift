@@ -126,6 +126,21 @@ struct SetGameView: View {
         let selectionState = game.selectionState(for: card)
         return CardView(card: card, cardBorderColor: borderColor(in: selectionState), hasThickBorder: selectionState.inSelection)
             .anchorPreference(key: PlayCardSizePreferenceKey.self, value: .bounds, transform: { geometry[$0].size })
+            .shakeEffect(direction: .horizontal, pct: selectionState == .partOfMismatch ? 1 : 0)
+            .shakeEffect(direction: .vertical, pct: selectionState == .partOfMatch ? 1 : 0)
+            // Using an implicit animation to separate the shakeEffect from the explicit animation that occurs
+            // when a card is chosen. Making it conditional (where it can sometimes be .none) allows the
+            // animation to become "one-way". The shake occurs when the selectionState becomes part of a match
+            // or a mismatch, but not when the selectionState goes back to being any of the other cases.
+            // This causes an unwanted side-effect where animatable modifiers inside the CardView (such as the
+            // border's stroke color and width) are also change according to this animation (repeated twice,
+            // no autoreverse).
+            // TODO: find a way to implement this without the unwanted side-effect, perhaps using an explicit animation.
+            .animation(
+                selectionState == .partOfMatch || selectionState == .partOfMismatch ?
+                    .linear(duration: 0.2).repeatCount(2, autoreverses: false) : .none,
+                value: selectionState
+            )
             .matchedGeometryEffect(id: card.id, in: discardNamespace)
             .matchedGeometryEffect(id: card.id, in: dealingNamespace)
             .onTapGesture {
@@ -178,7 +193,7 @@ struct SetGameView: View {
         struct CardBorderColors {
             static let any: Color = .accentColor
             static let selected: Color = .yellow
-            static let matchedSelection: Color = .red
+            static let matchedSelection: Color = .orange
             static let mismatchedSelection: Color = .gray
         }
     }

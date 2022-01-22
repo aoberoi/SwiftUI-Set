@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		924B3CF326CE3A8500D7A8F0 /* AspectVGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 924B3CF226CE3A8500D7A8F0 /* AspectVGrid.swift */; };
+		925A851D279B9DD000EB1CDF /* ShakeEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 925A851C279B9DD000EB1CDF /* ShakeEffect.swift */; };
 		92AEF2C92790DAA80077EBA5 /* PlayCardSizePreferenceKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AEF2C82790DAA80077EBA5 /* PlayCardSizePreferenceKey.swift */; };
 		92AEF2CB2792C92E0077EBA5 /* Extensions_CoreGraphics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AEF2CA2792C92E0077EBA5 /* Extensions_CoreGraphics.swift */; };
 		92AEF2D02798D7180077EBA5 /* Algorithms in Frameworks */ = {isa = PBXBuildFile; productRef = 92AEF2CF2798D7180077EBA5 /* Algorithms */; };
@@ -24,6 +25,7 @@
 
 /* Begin PBXFileReference section */
 		924B3CF226CE3A8500D7A8F0 /* AspectVGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AspectVGrid.swift; sourceTree = "<group>"; };
+		925A851C279B9DD000EB1CDF /* ShakeEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShakeEffect.swift; sourceTree = "<group>"; };
 		92AEF2C82790DAA80077EBA5 /* PlayCardSizePreferenceKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayCardSizePreferenceKey.swift; sourceTree = "<group>"; };
 		92AEF2CA2792C92E0077EBA5 /* Extensions_CoreGraphics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions_CoreGraphics.swift; sourceTree = "<group>"; };
 		92D7292826BE079D008E7FDE /* Set.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Set.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -76,6 +78,7 @@
 				92D7294026C0922B008E7FDE /* CardView.swift */,
 				92DC26D726CB39D800408AAE /* Diamond.swift */,
 				924B3CF226CE3A8500D7A8F0 /* AspectVGrid.swift */,
+				925A851C279B9DD000EB1CDF /* ShakeEffect.swift */,
 				92D7293E26BE116F008E7FDE /* SetGame.swift */,
 				92D7293C26BE113C008E7FDE /* Set.swift */,
 				92D7294226C32748008E7FDE /* TriState.swift */,
@@ -180,6 +183,7 @@
 				92AEF2CB2792C92E0077EBA5 /* Extensions_CoreGraphics.swift in Sources */,
 				92D7293D26BE113C008E7FDE /* Set.swift in Sources */,
 				92D7294126C0922B008E7FDE /* CardView.swift in Sources */,
+				925A851D279B9DD000EB1CDF /* ShakeEffect.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
