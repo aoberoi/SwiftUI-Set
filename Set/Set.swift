@@ -37,10 +37,12 @@ struct Set {
     }
     
     public mutating func start() {
+        guard visibleCards.isEmpty else { return }
         drawCards(amount: 12)
     }
     
     public mutating func discardPotentialMatch() {
+        guard !isOver else { return }
         guard matchIsSelected else { return }
         
         // move selected cards to the matched cards
@@ -53,6 +55,7 @@ struct Set {
     }
     
     public mutating func drawThreeMore() {
+        guard !isOver else { return }
         drawCards(amount: 3)
     }
     
@@ -67,6 +70,7 @@ struct Set {
     }
     
     public mutating func choose(card: Card) {
+        guard !isOver else { return }
         guard visibleCards.contains(card) else { return }
         
         if selectedCards.count < 3 {

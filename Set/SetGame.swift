@@ -66,17 +66,14 @@ class SetGame : ObservableObject {
     }
     
     func draw() {
-        guard !isOver else { return }
         gameModel.drawThreeMore()
     }
     
     func discardPotentialMatch() {
-        guard !isOver else { return }
         gameModel.discardPotentialMatch()
     }
     
     func choose(card: Card) {
-        guard !isOver else { return }
         gameModel.choose(card: card)
     }
     
