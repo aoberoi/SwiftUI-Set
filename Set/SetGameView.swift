@@ -89,43 +89,39 @@ struct SetGameView: View {
         }
     }
     
-    @ViewBuilder
     var deck: some View {
-        // TODO: this shares quite a bit with the matchedCards, and potentially can be abstracted into a separate view
-        ZStack {
-            ForEach(game.deck) { card in
-                CardView(
-                    card: card,
-                    cardBorderColor: DrawingConstants.CardBorderColors.any,
-                    hasThickBorder: false,
-                    isFaceUp: false
-                )
-                    .matchedGeometryEffect(id: card.id, in: dealingNamespace)
-                    .zIndex(zIndex(for: card))
-            }
+        PileView(items: game.deck, reverseOrder: true) { card in
+            CardView(
+                card: card,
+                cardBorderColor: DrawingConstants.CardBorderColors.any,
+                hasThickBorder: false,
+                isFaceUp: false
+            )
+                .matchedGeometryEffect(id: card.id, in: dealingNamespace)
+                .frame(maxWidth: playCardSize?.width, maxHeight: playCardSize?.height)
+                .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
         }
-        .frame(maxWidth: playCardSize?.width, maxHeight: playCardSize?.height)
-        .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
     }
     
-    @ViewBuilder
     var discardPile: some View {
-        ZStack {
-            ForEach(game.discardPile) { card in
-                CardView(card: card,
-                         cardBorderColor: DrawingConstants.CardBorderColors.any,
-                         hasThickBorder: false)
-                    .matchedGeometryEffect(id: card.id, in: discardNamespace)
-            }
+        PileView(items: game.discardPile, reverseOrder: false) { card in
+            CardView(
+                card: card,
+                cardBorderColor: DrawingConstants.CardBorderColors.any,
+                hasThickBorder: false
+            )
+                .matchedGeometryEffect(id: card.id, in: discardNamespace)
+                .frame(maxWidth: playCardSize?.width, maxHeight: playCardSize?.height)
+                .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
         }
-        .frame(maxWidth: playCardSize?.width, maxHeight: playCardSize?.height)
-        .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
     }
     
     private func cardView(for card: SetGame.Card, in geometry: GeometryProxy) -> some View {
         let selectionState = game.selectionState(for: card)
         return CardView(card: card, cardBorderColor: borderColor(in: selectionState), hasThickBorder: selectionState.inSelection)
             .anchorPreference(key: PlayCardSizePreferenceKey.self, value: .bounds, transform: { geometry[$0].size })
+            .matchedGeometryEffect(id: card.id, in: discardNamespace)
+            .matchedGeometryEffect(id: card.id, in: dealingNamespace)
             .animation(.none, value: selectionState)
             .shakeEffect(direction: .horizontal, pct: selectionState == .partOfMismatch ? 1 : 0)
             .shakeEffect(direction: .vertical, pct: selectionState == .partOfMatch ? 1 : 0)
@@ -140,8 +136,6 @@ struct SetGameView: View {
                     .linear(duration: 0.2).repeatCount(2, autoreverses: false) : .none,
                 value: selectionState
             )
-            .matchedGeometryEffect(id: card.id, in: discardNamespace)
-            .matchedGeometryEffect(id: card.id, in: dealingNamespace)
             .onTapGesture {
                 withAnimation {
                     game.choose(card: card)
@@ -164,11 +158,6 @@ struct SetGameView: View {
     private func dealingAnimation(for index: Int) -> Animation {
         let delay = AnimationConstants.dealDelayPerCard * Double(index)
         return Animation.easeInOut(duration: AnimationConstants.dealACardDuration).delay(delay)
-    }
-    
-    private func zIndex(for card: SetGame.Card) -> Double {
-        let indexInDeck = game.deck.firstIndex(where: { $0 == card }) ?? 0
-        return -Double(indexInDeck)
     }
     
     private func borderColor(in selectionState: SetGame.CardSelectionState) -> Color {

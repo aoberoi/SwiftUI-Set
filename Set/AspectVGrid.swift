@@ -25,7 +25,8 @@ struct AspectVGrid<Item: Identifiable, ItemView: View>: View {
                     }
                 }
                 .padding(itemSpacing)
-                .frame(minHeight: geometry.size.height)
+                // TODO: this causes a strange jump in the change of the height of the frame when the number of columns changes
+                //.frame(minHeight: geometry.size.height)
             }
         }
     }

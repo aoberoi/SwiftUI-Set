@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		924B3CF326CE3A8500D7A8F0 /* AspectVGrid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 924B3CF226CE3A8500D7A8F0 /* AspectVGrid.swift */; };
+		9250D7AC279CE34B00EF1D11 /* CardStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9250D7AB279CE34B00EF1D11 /* CardStackView.swift */; };
+		9250D7AE279D169F00EF1D11 /* PileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9250D7AD279D169F00EF1D11 /* PileView.swift */; };
 		925A851D279B9DD000EB1CDF /* ShakeEffect.swift in Sources */ = {isa = PBXBuildFile; fileRef = 925A851C279B9DD000EB1CDF /* ShakeEffect.swift */; };
 		92AEF2C92790DAA80077EBA5 /* PlayCardSizePreferenceKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AEF2C82790DAA80077EBA5 /* PlayCardSizePreferenceKey.swift */; };
 		92AEF2CB2792C92E0077EBA5 /* Extensions_CoreGraphics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92AEF2CA2792C92E0077EBA5 /* Extensions_CoreGraphics.swift */; };
@@ -25,6 +27,8 @@
 
 /* Begin PBXFileReference section */
 		924B3CF226CE3A8500D7A8F0 /* AspectVGrid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AspectVGrid.swift; sourceTree = "<group>"; };
+		9250D7AB279CE34B00EF1D11 /* CardStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardStackView.swift; sourceTree = "<group>"; };
+		9250D7AD279D169F00EF1D11 /* PileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PileView.swift; sourceTree = "<group>"; };
 		925A851C279B9DD000EB1CDF /* ShakeEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShakeEffect.swift; sourceTree = "<group>"; };
 		92AEF2C82790DAA80077EBA5 /* PlayCardSizePreferenceKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayCardSizePreferenceKey.swift; sourceTree = "<group>"; };
 		92AEF2CA2792C92E0077EBA5 /* Extensions_CoreGraphics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions_CoreGraphics.swift; sourceTree = "<group>"; };
@@ -78,6 +82,7 @@
 				92D7294026C0922B008E7FDE /* CardView.swift */,
 				92DC26D726CB39D800408AAE /* Diamond.swift */,
 				924B3CF226CE3A8500D7A8F0 /* AspectVGrid.swift */,
+				9250D7AD279D169F00EF1D11 /* PileView.swift */,
 				925A851C279B9DD000EB1CDF /* ShakeEffect.swift */,
 				92D7293E26BE116F008E7FDE /* SetGame.swift */,
 				92D7293C26BE113C008E7FDE /* Set.swift */,
@@ -86,6 +91,7 @@
 				92D7292F26BE079F008E7FDE /* Assets.xcassets */,
 				92D7293426BE079F008E7FDE /* Info.plist */,
 				92D7293126BE079F008E7FDE /* Preview Content */,
+				9250D7AB279CE34B00EF1D11 /* CardStackView.swift */,
 			);
 			path = Set;
 			sourceTree = "<group>";
@@ -179,9 +185,11 @@
 				92D7292C26BE079D008E7FDE /* SetApp.swift in Sources */,
 				92D7293F26BE116F008E7FDE /* SetGame.swift in Sources */,
 				92DC26D826CB39D800408AAE /* Diamond.swift in Sources */,
+				9250D7AE279D169F00EF1D11 /* PileView.swift in Sources */,
 				92D7294326C32748008E7FDE /* TriState.swift in Sources */,
 				92AEF2CB2792C92E0077EBA5 /* Extensions_CoreGraphics.swift in Sources */,
 				92D7293D26BE113C008E7FDE /* Set.swift in Sources */,
+				9250D7AC279CE34B00EF1D11 /* CardStackView.swift in Sources */,
 				92D7294126C0922B008E7FDE /* CardView.swift in Sources */,
 				925A851D279B9DD000EB1CDF /* ShakeEffect.swift in Sources */,
 			);
