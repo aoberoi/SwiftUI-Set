@@ -90,30 +90,36 @@ struct SetGameView: View {
     }
     
     var deck: some View {
-        PileView(items: game.deck, reverseOrder: true) { card in
-            CardView(
-                card: card,
-                cardBorderColor: DrawingConstants.CardBorderColors.any,
-                hasThickBorder: false,
-                isFaceUp: false
-            )
-                .matchedGeometryEffect(id: card.id, in: dealingNamespace)
-                .frame(maxWidth: playCardSize?.width, maxHeight: playCardSize?.height)
-                .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
+        ZStack {
+            placeholderView(label: "Deck Empty")
+            PileView(items: game.deck, reverseOrder: true) { card in
+                CardView(
+                    card: card,
+                    cardBorderColor: DrawingConstants.CardBorderColors.any,
+                    hasThickBorder: false,
+                    isFaceUp: false
+                )
+                    .matchedGeometryEffect(id: card.id, in: dealingNamespace)
+                    .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
+            }
         }
+        .frame(maxWidth: playCardSize?.width, maxHeight: playCardSize?.height)
     }
     
     var discardPile: some View {
-        PileView(items: game.discardPile, reverseOrder: false) { card in
-            CardView(
-                card: card,
-                cardBorderColor: DrawingConstants.CardBorderColors.any,
-                hasThickBorder: false
-            )
-                .matchedGeometryEffect(id: card.id, in: discardNamespace)
-                .frame(maxWidth: playCardSize?.width, maxHeight: playCardSize?.height)
-                .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
+        ZStack {
+            placeholderView(label: "Discard")
+            PileView(items: game.discardPile, reverseOrder: false) { card in
+                CardView(
+                    card: card,
+                    cardBorderColor: DrawingConstants.CardBorderColors.any,
+                    hasThickBorder: false
+                )
+                    .matchedGeometryEffect(id: card.id, in: discardNamespace)
+                    .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
+            }
         }
+        .frame(maxWidth: playCardSize?.width, maxHeight: playCardSize?.height)
     }
     
     private func cardView(for card: SetGame.Card, in geometry: GeometryProxy) -> some View {
@@ -141,6 +147,29 @@ struct SetGameView: View {
                     game.choose(card: card)
                 }
             }
+    }
+    
+    private func placeholderView(label: String? = nil) -> some View {
+        GeometryReader { geometry in
+            ZStack {
+                let smallestDimension = min(geometry.size.height, geometry.size.width)
+                let dashLength = smallestDimension * DrawingConstants.placeholderDashLengthRatio
+                Text(label ?? "").opacity(label == nil ? 0 : 1)
+                    .textCase(.uppercase)
+                    .font(.caption.bold())
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                RoundedRectangle(
+                    cornerRadius: CardView.DrawingConstants.paperCornerRadiusRatio * smallestDimension
+                )
+                    .strokeBorder(style: StrokeStyle(
+                        lineWidth: DrawingConstants.placeholderLineWidthRatio * smallestDimension,
+                        dash: [dashLength, dashLength]
+                    ))
+            }
+            .opacity(DrawingConstants.placeholderOpacity)
+            .foregroundColor(Color(UIColor.systemBackground))
+        }
+        .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
     }
     
     private func dealInitialCards() {
@@ -177,6 +206,10 @@ struct SetGameView: View {
         static let cardPadding: CGFloat = 8.0
         static let minimumCardWidth: CGFloat = 100.0
         static let cardAspectRatio: CGFloat = 2/1
+        
+        static let placeholderLineWidthRatio: CGFloat = 0.07
+        static let placeholderDashLengthRatio: CGFloat = 0.1
+        static let placeholderOpacity: Double = 0.5
         
         struct CardBorderColors {
             static let any: Color = .accentColor

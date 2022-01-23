@@ -186,7 +186,7 @@ struct CardView: View {
         return max(DrawingConstants.openSymbolLineWidthRatio * shortestDimension, 2.0)
     }
     
-    private struct DrawingConstants {
+    struct DrawingConstants {
         static let paperCornerRadiusRatio: CGFloat = 0.1
         
         static let borderDistanceFromCornerRatio: CGFloat = 0.5
