@@ -12,18 +12,10 @@ class SetGame : ObservableObject {
     
     @Published private var gameModel = Set()
     
-    // TODO: see if @Published helps remove any need for calling objectWillChange.send()
-//    @Published private var visuallyUndealtCards: [Card] = []
-    
-//    var deck: [Card] { visuallyUndealtCards + gameModel.deck }
-//    var deckIsEmpty: Bool { visuallyUndealtCards.isEmpty && gameModel.deckIsEmpty }
-//    var drawnCards: [Card] { gameModel.drawnCards.filter({ !visuallyUndealtCards.contains($0) }) }
-    
     var deck: [Card] { gameModel.deck }
     var visibleCards: [Card] { gameModel.visibleCards }
     var discardPile: [Card] { gameModel.discardPile }
     
-    // TODO: the indicies could be wrong since visuallyUndealtCards were removed from the drawnCards
     var matchIsSelected: Bool { gameModel.matchIsSelected }
     var totalMatchedCards: Int { gameModel.discardPile.count }
     var isOver: Bool { gameModel.isOver }
@@ -49,16 +41,8 @@ class SetGame : ObservableObject {
     
     // MARK: Intents
     
-    func start(/* onEachCard: (Int, () -> Void) -> Void */) {
+    func start() {
         gameModel.start()
-//        visuallyUndealtCards.append(contentsOf: gameModel.drawnCards)
-//        var index = 0
-//        while !visuallyUndealtCards.isEmpty {
-//            onEachCard(index, {
-//                visuallyUndealtCards.removeFirst()
-//            })
-//            index += 1
-//        }
     }
     
     func reset() {
@@ -77,9 +61,4 @@ class SetGame : ObservableObject {
         gameModel.choose(card: card)
     }
     
-//    struct DealActions: Sequence, IteratorProtocol {
-//        mutating func next() -> (() -> Void)? {
-//            return nil
-//        }
-//    }
 }

@@ -21,7 +21,7 @@ struct Set {
     }
     
     public var matchIsSelected: Bool {
-        Set.isMatch(cards: Array(selectedCards))
+        Set.isMatch(cards: selectedCards)
     }
     
     public func isSelected(card: Card) -> Bool {
@@ -59,16 +59,6 @@ struct Set {
         drawCards(amount: 3)
     }
     
-    public mutating func drawCards(amount: Int) {
-        for _ in 0..<amount {
-            if !deck.isEmpty {
-                visibleCards.append(deck.removeFirst())
-            }
-        }
-        
-        printHint()
-    }
-    
     public mutating func choose(card: Card) {
         guard !isOver else { return }
         guard visibleCards.contains(card) else { return }
@@ -90,6 +80,16 @@ struct Set {
         } else {
             selectedCards = [card]
         }
+    }
+    
+    private mutating func drawCards(amount: Int) {
+        for _ in 0..<amount {
+            if !deck.isEmpty {
+                visibleCards.append(deck.removeFirst())
+            }
+        }
+        
+        printHint()
     }
 
     private func printHint() {

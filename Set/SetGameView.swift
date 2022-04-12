@@ -11,8 +11,12 @@ struct SetGameView: View {
     @ObservedObject var game: SetGame
     
     @State private var playCardSize: CGSize?
-    @Namespace private var dealingNamespace
-    @Namespace private var discardNamespace
+    
+    // Every card is identifable and each card is only ever in the view heirarchy once. Therefore
+    // we only need one namespace to track card movement.
+    @Namespace private var cardMovement
+    
+    // MARK: - Views
     
     var body: some View {
         VStack(spacing: 0) {
@@ -23,59 +27,52 @@ struct SetGameView: View {
             controls
         }
         .background(Color(UIColor.systemGray5))
-        .onAppear {
-            dealInitialCards()
-        }
+        .onAppear(perform: dealInitialCards)
     }
     
-    var controls: some View {
-        HStack {
-            deck.onTapGesture {
-                var delay: Double = 0
-                if game.matchIsSelected {
-                    // TODO: factor out this constant
-                    delay += 0.15
-                    withAnimation {
-                        game.discardPotentialMatch()
-                    }
-                }
-                withAnimation(.easeInOut.delay(delay)) {
-                    game.draw()
-                }
-            }
-            .frame(maxWidth: .infinity)
-            Button("New Game") {
-                withAnimation {
-                    game.reset()
-                }
-                // TODO: factor out this constant
-                withAnimation(.easeInOut.delay(1.0)) {
-                    dealInitialCards()
-                }
-            }
-            .frame(maxWidth: .infinity)
-            discardPile
-                .frame(maxWidth: .infinity)
-        }
-        .padding()
-        .background(Color("FeltGreen"))
-        .foregroundColor(.white)
-    }
-    
-    var playArea: some View {
+    private var playArea: some View {
         GeometryReader { geometry in
             AspectVGrid(
                 items: game.visibleCards,
                 aspectRatio: DrawingConstants.cardAspectRatio,
                 minItemWidth: DrawingConstants.minimumCardWidth,
                 itemSpacing: DrawingConstants.cardPadding
-            ) { cardView(for: $0, in: geometry) }
+            ) { card in
+                cardView(for: card, in: geometry)
+            }
+            // TODO: Update the preference key to utilize feedack from Apple
             .onPreferenceChange(PlayCardSizePreferenceKey.self) { playCardSize = $0 }
         }
     }
     
+    private func cardView(for card: SetGame.Card, in geometry: GeometryProxy) -> some View {
+        let selectionState = game.selectionState(for: card)
+        return CardView(
+                card: card,
+                cardBorderColor: borderColor(for: selectionState),
+                hasThickBorder: selectionState.inSelection
+        )
+            .anchorPreference(key: PlayCardSizePreferenceKey.self, value: .bounds, transform: { geometry[$0].size })
+            .matchedGeometryEffect(id: card.id, in: cardMovement)
+            .animation(.none, value: selectionState)
+            .shakeEffect(direction: .horizontal, pct: selectionState == .partOfMismatch ? 1 : 0)
+            .shakeEffect(direction: .vertical, pct: selectionState == .partOfMatch ? 1 : 0)
+            // Using an implicit animation to separate the shakeEffect from the explicit animation
+            // that occurs when a card is chosen. Making it conditional (where it can sometimes be
+            // .none) allows the animation to become "one-way". The shake occurs when the
+            // selectionState becomes part of a match or a mismatch, but not when the selectionState
+            // goes back to being any of the other cases. The implicit animation above "resets" the
+            // wrapped view so that it doesn't cascade this implicit animation to the wrapped views.
+            .animation(
+                selectionState == .partOfMatch || selectionState == .partOfMismatch ?
+                    .linear(duration: 0.2).repeatCount(2, autoreverses: false) : .none,
+                value: selectionState
+            )
+            .onTapGesture(perform: choose(card))
+    }
+    
     @ViewBuilder
-    var endGame: some View {
+    private var endGame: some View {
         if game.isOver {
             VStack {
                 Text("Game Over")
@@ -89,17 +86,31 @@ struct SetGameView: View {
         }
     }
     
+    var controls: some View {
+        HStack {
+            deck.onTapGesture(perform: drawMoreCards)
+                .frame(maxWidth: .infinity)
+            Button("New Game", action: newGame)
+                .frame(maxWidth: .infinity)
+            discardPile
+                .frame(maxWidth: .infinity)
+        }
+        .padding()
+        .background(Color("FeltGreen"))
+        .foregroundColor(.white)
+    }
+    
     var deck: some View {
         ZStack {
             placeholderView(label: "Deck Empty")
-            PileView(items: game.deck, reverseOrder: true) { card in
+            PileView(items: game.deck) { card in
                 CardView(
                     card: card,
                     cardBorderColor: DrawingConstants.CardBorderColors.any,
                     hasThickBorder: false,
                     isFaceUp: false
                 )
-                    .matchedGeometryEffect(id: card.id, in: dealingNamespace)
+                    .matchedGeometryEffect(id: card.id, in: cardMovement)
                     .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
             }
         }
@@ -109,44 +120,17 @@ struct SetGameView: View {
     var discardPile: some View {
         ZStack {
             placeholderView(label: "Discard")
-            PileView(items: game.discardPile, reverseOrder: false) { card in
+            PileView(items: game.discardPile) { card in
                 CardView(
                     card: card,
                     cardBorderColor: DrawingConstants.CardBorderColors.any,
                     hasThickBorder: false
                 )
-                    .matchedGeometryEffect(id: card.id, in: discardNamespace)
+                    .matchedGeometryEffect(id: card.id, in: cardMovement)
                     .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
             }
         }
         .frame(maxWidth: playCardSize?.width, maxHeight: playCardSize?.height)
-    }
-    
-    private func cardView(for card: SetGame.Card, in geometry: GeometryProxy) -> some View {
-        let selectionState = game.selectionState(for: card)
-        return CardView(card: card, cardBorderColor: borderColor(in: selectionState), hasThickBorder: selectionState.inSelection)
-            .anchorPreference(key: PlayCardSizePreferenceKey.self, value: .bounds, transform: { geometry[$0].size })
-            .matchedGeometryEffect(id: card.id, in: discardNamespace)
-            .matchedGeometryEffect(id: card.id, in: dealingNamespace)
-            .animation(.none, value: selectionState)
-            .shakeEffect(direction: .horizontal, pct: selectionState == .partOfMismatch ? 1 : 0)
-            .shakeEffect(direction: .vertical, pct: selectionState == .partOfMatch ? 1 : 0)
-            // Using an implicit animation to separate the shakeEffect from the explicit animation that occurs
-            // when a card is chosen. Making it conditional (where it can sometimes be .none) allows the
-            // animation to become "one-way". The shake occurs when the selectionState becomes part of a match
-            // or a mismatch, but not when the selectionState goes back to being any of the other cases.
-            // The implicit animation above "resets" the wrapped view so that it doesn't cascade this implicit
-            // animation to the wrapped views.
-            .animation(
-                selectionState == .partOfMatch || selectionState == .partOfMismatch ?
-                    .linear(duration: 0.2).repeatCount(2, autoreverses: false) : .none,
-                value: selectionState
-            )
-            .onTapGesture {
-                withAnimation {
-                    game.choose(card: card)
-                }
-            }
     }
     
     private func placeholderView(label: String? = nil) -> some View {
@@ -172,24 +156,48 @@ struct SetGameView: View {
         .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
     }
     
+    // MARK: - Actions
+    
     private func dealInitialCards() {
-//        game.start { index, dealACard in
-//            withAnimation(dealingAnimation(for: index)) {
-//                dealACard()
-//            }
-//        }
-        // TODO: move this constant out
-        withAnimation(.easeInOut(duration: 0.7)) {
+        withAnimation(groupOfCards()) {
             game.start()
         }
     }
     
-    private func dealingAnimation(for index: Int) -> Animation {
-        let delay = AnimationConstants.dealDelayPerCard * Double(index)
-        return Animation.easeInOut(duration: AnimationConstants.dealACardDuration).delay(delay)
+    private func newGame() {
+        withAnimation(groupOfCards()) {
+            game.reset()
+        }
+        withAnimation(groupOfCards(afterGroups: 1)) {
+            game.start()
+        }
     }
     
-    private func borderColor(in selectionState: SetGame.CardSelectionState) -> Color {
+    private func drawMoreCards() {
+        let willDiscard = game.matchIsSelected
+        withAnimation(groupOfCards()) {
+            game.discardPotentialMatch()
+        }
+        withAnimation(
+            groupOfCards().delay(willDiscard ? AnimationConstants.concurrentMoveDelay : 0)
+        ) {
+            game.draw()
+        }
+    }
+    
+    private func choose(_ card: SetGame.Card) -> (() -> Void) {
+        // TODO: do i need to capture a weak self? is there a possible memory cycle? how does this
+        // interact with @escaping?
+        return {
+            withAnimation(groupOfCards()) {
+                game.choose(card: card)
+            }
+        }
+    }
+    
+    // MARK: - Helpers
+
+    private func borderColor(for selectionState: SetGame.CardSelectionState) -> Color {
         switch selectionState {
         case .unselected:
             return DrawingConstants.CardBorderColors.any
@@ -219,7 +227,21 @@ struct SetGameView: View {
         }
     }
     
+    private func groupOfCards(afterGroups: Int = 0) -> Animation {
+        Animation
+            .easeInOut(duration: AnimationConstants.moveGroupOfCardsDuration)
+            .delay(Double(afterGroups) * AnimationConstants.moveGroupOfCardsDuration)
+    }
+    
+    // TODO: use this method to build dealing animations that move individual cards at a time
+    private func dealingAnimation(for index: Int) -> Animation {
+        let delay = AnimationConstants.dealDelayPerCard * Double(index)
+        return Animation.easeInOut(duration: AnimationConstants.dealACardDuration).delay(delay)
+    }
+
     struct AnimationConstants {
+        static let moveGroupOfCardsDuration: Double = 1.0
+        static let concurrentMoveDelay: Double = 0.5
         static let dealACardDuration: Double = 0.25
         static let dealDelayPerCard: Double = 0.25
     }
