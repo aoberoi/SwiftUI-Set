@@ -28,15 +28,15 @@ struct PileView<Item: Identifiable, ItemView: View /*,
                    
     var body: some View {
         ZStack {
-            ForEach(items) { item in
+            ForEach(items.reversed()) { item in
                 content(item)
-                    .offset(offset(for: item))
-                    .zIndex(zIndex(for: item))
+//                    .offset(offset(for: item))
+//                    .zIndex(zIndex(for: item))
             }
         }
-        .onAppear {
-            computeOffsets()
-        }
+//        .onAppear {
+//            computeOffsets()
+//        }
     }
     
     private func computeOffsets() {
@@ -47,7 +47,6 @@ struct PileView<Item: Identifiable, ItemView: View /*,
                 currentOffset.width += CGFloat.random(in: -1.5...1.5)
                 currentOffset.height -= CGFloat.random(in: 0.0...1.0)
             }
-            print(offsets)
         }
     }
     

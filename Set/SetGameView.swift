@@ -10,8 +10,6 @@ import SwiftUI
 struct SetGameView: View {
     @ObservedObject var game: SetGame
     
-    @State private var playCardSize: CGSize?
-    
     // Every card is identifable and each card is only ever in the view heirarchy once. Therefore
     // we only need one namespace to track card movement.
     @Namespace private var cardMovement
@@ -31,28 +29,23 @@ struct SetGameView: View {
     }
     
     private var playArea: some View {
-        GeometryReader { geometry in
-            AspectVGrid(
-                items: game.visibleCards,
-                aspectRatio: DrawingConstants.cardAspectRatio,
-                minItemWidth: DrawingConstants.minimumCardWidth,
-                itemSpacing: DrawingConstants.cardPadding
-            ) { card in
-                cardView(for: card, in: geometry)
-            }
-            // TODO: Update the preference key to utilize feedack from Apple
-            .onPreferenceChange(PlayCardSizePreferenceKey.self) { playCardSize = $0 }
+        AspectVGrid(
+            items: game.visibleCards,
+            aspectRatio: DrawingConstants.cardAspectRatio,
+            minItemWidth: DrawingConstants.minimumCardWidth,
+            itemSpacing: DrawingConstants.cardPadding
+        ) { card in
+            cardView(for: card)
         }
     }
     
-    private func cardView(for card: SetGame.Card, in geometry: GeometryProxy) -> some View {
+    private func cardView(for card: SetGame.Card) -> some View {
         let selectionState = game.selectionState(for: card)
         return CardView(
                 card: card,
                 cardBorderColor: borderColor(for: selectionState),
                 hasThickBorder: selectionState.inSelection
         )
-            .anchorPreference(key: PlayCardSizePreferenceKey.self, value: .bounds, transform: { geometry[$0].size })
             .matchedGeometryEffect(id: card.id, in: cardMovement)
             .animation(.none, value: selectionState)
             .shakeEffect(direction: .horizontal, pct: selectionState == .partOfMismatch ? 1 : 0)
@@ -111,10 +104,9 @@ struct SetGameView: View {
                     isFaceUp: false
                 )
                     .matchedGeometryEffect(id: card.id, in: cardMovement)
-                    .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
             }
         }
-        .frame(maxWidth: playCardSize?.width, maxHeight: playCardSize?.height)
+        .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
     }
     
     var discardPile: some View {
@@ -127,10 +119,9 @@ struct SetGameView: View {
                     hasThickBorder: false
                 )
                     .matchedGeometryEffect(id: card.id, in: cardMovement)
-                    .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
             }
         }
-        .frame(maxWidth: playCardSize?.width, maxHeight: playCardSize?.height)
+        .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
     }
     
     private func placeholderView(label: String? = nil) -> some View {
@@ -153,7 +144,6 @@ struct SetGameView: View {
             .opacity(DrawingConstants.placeholderOpacity)
             .foregroundColor(Color(UIColor.systemBackground))
         }
-        .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
     }
     
     // MARK: - Actions
