@@ -17,15 +17,27 @@ struct SetGameView: View {
     // MARK: - Views
     
     var body: some View {
-        VStack(spacing: 0) {
-            ZStack {
-                playArea
-                endGame
+        GeometryReader { geometry in
+            VStack(spacing: 0) {
+                ZStack {
+                    playArea
+                    endGame
+                }
+                    .frame(minHeight: geometry.size.height / 4 * 3)
+                controls
+                // It seems like there's no way to define a flexible frame with maxHeight and
+                // hugging constraints that allow the frame to be smaller than the maxHeight.
+                // Or, is it something about the controls view that makes this not work? Maybe if
+                // the .infinity widths were lowered in priority somehow, the controls view would
+                // just take the idealHeight instead of growing to be any bigger.
+                // The following two attempts did not work:
+                //    .frame(minHeight: 0, idealHeight: 0, maxHeight: geometry.size.height / 4, alignment: .bottom)
+                //    .frame(idealHeight: geometry.size.height / 4, alignment: .bottom)
+                    .layoutPriority(1)
             }
-            controls
+            .background(Color(UIColor.systemGray5))
+            .onAppear(perform: dealInitialCards)
         }
-        .background(Color(UIColor.systemGray5))
-        .onAppear(perform: dealInitialCards)
     }
     
     private var playArea: some View {
