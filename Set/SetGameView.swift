@@ -124,7 +124,7 @@ struct SetGameView: View {
     var discardPile: some View {
         ZStack {
             placeholderView(label: "Discard")
-            PileView(items: game.discardPile) { card in
+            PileView(items: game.discardPile.reversed()) { card in
                 CardView(
                     card: card,
                     cardBorderColor: DrawingConstants.CardBorderColors.any,

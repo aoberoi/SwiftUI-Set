@@ -10,8 +10,13 @@ import Algorithms
 
 struct Set {
     
+    // Next card to be drawn is at the start
     var deck: [Card] = Set.generateDeck()
+    
+    // Most recently drawn card is at the end
     var visibleCards: [Card] = []
+    
+    // Most recently discarded card is at the end
     var discardPile: [Card] = []
     
     private var selectedCards: Swift.Set<Card> = []
