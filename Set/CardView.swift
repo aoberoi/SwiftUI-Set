@@ -26,9 +26,9 @@ struct CardView: View {
                 paper(for: geometry.size)
                 border(for: geometry.size)
                 symbols(for: geometry.size)
-                    .opacity(isFaceUp ? 1 : 0)
-                cardBack(for: geometry.size)
-                    .opacity(isFaceUp ? 0 : 1)
+                if !isFaceUp {
+                    cardBack(for: geometry.size)
+                }
             }
         }
     }
