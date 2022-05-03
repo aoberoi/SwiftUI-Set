@@ -24,6 +24,8 @@ struct AspectVGrid<Item: Identifiable, ItemView: View>: View {
                         content(item).aspectRatio(aspectRatio, contentMode: .fit)
                     }
                 }
+                // TODO: Remove the following border, only for debugging.
+                .border(Color.red)
                 .padding(itemSpacing)
                 // TODO: this causes a strange jump in the change of the height of the frame when the number of columns changes
                 //.frame(minHeight: geometry.size.height)

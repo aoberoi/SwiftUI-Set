@@ -167,12 +167,18 @@ struct SetGameView: View {
     }
     
     private func newGame() {
+        print("BEFORE RESET:")
+        game.printGame()
         withAnimation(groupOfCards()) {
             game.reset()
         }
+        print("AFTER RESET, BEFORE START:")
+        game.printGame()
         withAnimation(groupOfCards(afterGroups: 1)) {
             game.start()
         }
+        print("AFTER START:")
+        game.printGame()
     }
     
     private func drawMoreCards() {

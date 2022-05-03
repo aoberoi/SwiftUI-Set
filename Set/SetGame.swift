@@ -61,4 +61,7 @@ class SetGame : ObservableObject {
         gameModel.choose(card: card)
     }
     
+    func printGame() {
+        print(gameModel)
+    }
 }

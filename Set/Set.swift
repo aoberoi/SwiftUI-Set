@@ -8,7 +8,26 @@
 import Foundation
 import Algorithms
 
-struct Set {
+struct Set: CustomStringConvertible {
+    var description: String {
+        """
+        Deck: \(Set.describeCards(deck))
+        Visible Cards: \(Set.describeCards(visibleCards))
+        Discard Pile: \(Set.describeCards(discardPile))
+        """
+    }
+    
+    private static func describeCards(_ cards: [Card]) -> String {
+        if cards.isEmpty {
+            return "[]"
+        }
+        
+        return """
+        [
+          \(cards.map({ String(describing: $0) }).joined(separator: ", \n  "))
+        ]
+        """
+    }
     
     // Next card to be drawn is at the start
     var deck: [Card] = Set.generateDeck()
@@ -162,9 +181,65 @@ struct Set {
         return true
     }
     
-    struct Card: Identifiable, Hashable {
-        // TODO: This is an arbitrary way to identify cards, but it works. Ideally, the ID type would be a Tuple but
-        // since Tuple's are not Hashable that doesn't work.
+    struct Card: Identifiable, Hashable, CustomStringConvertible {
+        
+        // TODO: Remove the following description code because it references information that should
+        // only be known in the View layer
+        private static func symbolDescription(_ symbol: TriState) -> String {
+            switch symbol {
+            case .first:
+                return "Diamond"
+            case .second:
+                return "Rectangle"
+            case .third:
+                return "Circle"
+            }
+        }
+        
+        private static func colorDescription(_ symbol: TriState) -> String {
+            switch symbol {
+            case .first:
+                return "Red"
+            case .second:
+                return "Green"
+            case .third:
+                return "Purple"
+            }
+        }
+        
+        private static func cardinalityDescription(_ symbol: TriState) -> String {
+            switch symbol {
+            case .first:
+                return "1"
+            case .second:
+                return "2"
+            case .third:
+                return "3"
+            }
+        }
+        
+        private static func shadingDescription(_ symbol: TriState) -> String {
+            switch symbol {
+            case .first:
+                return "Solid"
+            case .second:
+                return "Striped"
+            case .third:
+                return "Open"
+            }
+        }
+        
+        var description: String {
+            """
+            (symbol: \(Card.symbolDescription(symbol)), \
+            color: \(Card.colorDescription(color)), \
+            cardinality: \(Card.cardinalityDescription(cardinality)), \
+            shading: \(Card.shadingDescription(shading)))
+            """
+        }
+        
+        // This is an arbitrary way to identify cards, but it works. Ideally, the ID type would be a
+        // Tuple but since Tuple's are not Hashable that doesn't work.
         var id: [TriState] {
             [cardinality, color, symbol, shading]
         }
