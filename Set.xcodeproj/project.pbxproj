@@ -30,6 +30,7 @@
 		9250D7AB279CE34B00EF1D11 /* CardStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardStackView.swift; sourceTree = "<group>"; };
 		9250D7AD279D169F00EF1D11 /* PileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PileView.swift; sourceTree = "<group>"; };
 		925A851C279B9DD000EB1CDF /* ShakeEffect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShakeEffect.swift; sourceTree = "<group>"; };
+		925ABEBC2995D7F400050185 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		92AEF2C82790DAA80077EBA5 /* PlayCardSizePreferenceKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayCardSizePreferenceKey.swift; sourceTree = "<group>"; };
 		92AEF2CA2792C92E0077EBA5 /* Extensions_CoreGraphics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions_CoreGraphics.swift; sourceTree = "<group>"; };
 		92D7292826BE079D008E7FDE /* Set.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Set.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -60,6 +61,7 @@
 		92D7291F26BE079D008E7FDE = {
 			isa = PBXGroup;
 			children = (
+				925ABEBC2995D7F400050185 /* README.md */,
 				92D7292A26BE079D008E7FDE /* Set */,
 				92D7292926BE079D008E7FDE /* Products */,
 			);
