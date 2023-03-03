@@ -38,6 +38,12 @@ struct Set: CustomStringConvertible {
     // Most recently discarded card is at the end
     var discardPile: [Card] = []
     
+    // NOTE: this is kind of weird, because there's a copy of the card in this property. it may
+    // make more sense to just store the IDs or the indicies of the selection based on the
+    // visibleCards array (selected cards should always be a subset of the visible cards). let's
+    // revisit this after we check how the view code uses this property. there could even be a
+    // computed property that returns the selected cards based on a stored property which only has
+    // the indicies. or maybe the selection could be a whole different model or view model?
     private var selectedCards: Swift.Set<Card> = []
     
     public var selectionIsComplete: Bool {
@@ -52,6 +58,9 @@ struct Set: CustomStringConvertible {
         selectedCards.contains(card)
     }
     
+    // NOTE: this property is somewhat expensive to compute. the read in discardPotentialMatch
+    // could be replaced with only a check for deck.isEmpty. if that is true for other places
+    // this property is read, then it may be worth separating the expensive part from the cheap part
     public var isOver: Bool {
         deck.isEmpty && availableMatchingSelection == nil
     }
