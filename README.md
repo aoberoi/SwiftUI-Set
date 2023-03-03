@@ -54,10 +54,13 @@ All tasks are complete.
        were drawn (seems odd).
     
 2. Fix animation issues.
+    a. The animation for choosing a card doesn't seem to be working. No matter how I adjust the
+       duration, it is not effected.
     a. Sequencing animations: When dealing a new game, cards animate back to the deck and then cards
        animate from the deck to the playArea. When a match is selected and the deck is used to deal
        3 more cards, the selected cards animate to the matchedCards and then the cards animate from
-       the deck to the playArea.
+       the deck to the playArea. Side note: the calculation for groupOfCards probably needs a small
+       constant added to it.
     a. There seems to be issues in AspectVGrid, especially when the number of columns change (such
        as when there's a new game or when orientation changes). This may be tied up with view
        identity.
