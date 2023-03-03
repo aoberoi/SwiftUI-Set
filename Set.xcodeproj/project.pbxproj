@@ -58,6 +58,38 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		92B296DE298D9C4D00990E90 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				92D7292D26BE079D008E7FDE /* SetGameView.swift */,
+				924B3CF226CE3A8500D7A8F0 /* AspectVGrid.swift */,
+				9250D7AD279D169F00EF1D11 /* PileView.swift */,
+				9250D7AB279CE34B00EF1D11 /* CardStackView.swift */,
+				92D7294026C0922B008E7FDE /* CardView.swift */,
+				92DC26D726CB39D800408AAE /* Diamond.swift */,
+				925A851C279B9DD000EB1CDF /* ShakeEffect.swift */,
+				92AEF2C82790DAA80077EBA5 /* PlayCardSizePreferenceKey.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		92B296DF298D9C9F00990E90 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				92D7293C26BE113C008E7FDE /* Set.swift */,
+				92D7294226C32748008E7FDE /* TriState.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		92B296E0298D9CD300990E90 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				92D7293E26BE116F008E7FDE /* SetGame.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
 		92D7291F26BE079D008E7FDE = {
 			isa = PBXGroup;
 			children = (
@@ -78,22 +110,14 @@
 		92D7292A26BE079D008E7FDE /* Set */ = {
 			isa = PBXGroup;
 			children = (
+				92B296DF298D9C9F00990E90 /* Model */,
+				92B296DE298D9C4D00990E90 /* View */,
+				92B296E0298D9CD300990E90 /* ViewModel */,
 				92D7292B26BE079D008E7FDE /* SetApp.swift */,
-				92D7292D26BE079D008E7FDE /* SetGameView.swift */,
-				92AEF2C82790DAA80077EBA5 /* PlayCardSizePreferenceKey.swift */,
-				92D7294026C0922B008E7FDE /* CardView.swift */,
-				92DC26D726CB39D800408AAE /* Diamond.swift */,
-				924B3CF226CE3A8500D7A8F0 /* AspectVGrid.swift */,
-				9250D7AD279D169F00EF1D11 /* PileView.swift */,
-				925A851C279B9DD000EB1CDF /* ShakeEffect.swift */,
-				92D7293E26BE116F008E7FDE /* SetGame.swift */,
-				92D7293C26BE113C008E7FDE /* Set.swift */,
-				92D7294226C32748008E7FDE /* TriState.swift */,
 				92AEF2CA2792C92E0077EBA5 /* Extensions_CoreGraphics.swift */,
 				92D7292F26BE079F008E7FDE /* Assets.xcassets */,
 				92D7293426BE079F008E7FDE /* Info.plist */,
 				92D7293126BE079F008E7FDE /* Preview Content */,
-				9250D7AB279CE34B00EF1D11 /* CardStackView.swift */,
 			);
 			path = Set;
 			sourceTree = "<group>";
