@@ -18,21 +18,19 @@ struct SetGameView: View {
     
     var body: some View {
         GeometryReader { geometry in
+            // NOTE: The layout intention is to set a maxHeight on controls of 1/4 the available
+            // height (while allowing it to take less based on its own contents). The ZStack sibling
+            // would take the remaining height. However, the .frame(maxHeight:alignment:) modifier
+            // does not work this way. The modifier limits the height proposed to controls, but then
+            // takes up the remaining space up to that maxHeight anyway. This implementation
+            // achieves the same result, but with a less clear expression.
             VStack(spacing: 0) {
                 ZStack {
                     playArea
                     endGame
                 }
-                    .frame(minHeight: geometry.size.height / 4 * 3)
+                    .frame(minHeight: geometry.size.height * (3 / 4))
                 controls
-                // It seems like there's no way to define a flexible frame with maxHeight and
-                // hugging constraints that allow the frame to be smaller than the maxHeight.
-                // Or, is it something about the controls view that makes this not work? Maybe if
-                // the .infinity widths were lowered in priority somehow, the controls view would
-                // just take the idealHeight instead of growing to be any bigger.
-                // The following two attempts did not work:
-                //    .frame(minHeight: 0, idealHeight: 0, maxHeight: geometry.size.height / 4, alignment: .bottom)
-                //    .frame(idealHeight: geometry.size.height / 4, alignment: .bottom)
                     .layoutPriority(1)
             }
             .background(Color(UIColor.systemGray5))
@@ -92,6 +90,8 @@ struct SetGameView: View {
     }
     
     var controls: some View {
+        // NOTE: A custom layout could be used to better express that each of the 3 children of
+        // the HStack should take up equal width, and it should take up all the width offered.
         HStack {
             deck.onTapGesture(perform: drawMoreCards)
                 .frame(maxWidth: .infinity)
