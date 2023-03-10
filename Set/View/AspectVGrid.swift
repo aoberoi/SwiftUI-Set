@@ -25,7 +25,7 @@ struct AspectVGrid<Item: Identifiable, ItemView: View>: View {
                     }
                 }
                 // TODO: Remove the following border, only for debugging.
-                .border(Color.red)
+//                .border(Color.red)
                 .padding(itemSpacing)
                 // TODO: this causes a strange jump in the change of the height of the frame when the number of columns changes
                 //.frame(minHeight: geometry.size.height)
@@ -61,7 +61,11 @@ struct AspectVGrid<Item: Identifiable, ItemView: View>: View {
             rowCount = (itemCount + (columnCount - 1)) / columnCount
         } while columnCount < itemCount
         
-        return floor((size.width - (CGFloat(columnCount + 1) * itemSpacing)) / CGFloat(columnCount))
+        // TODO: remove the following variable and print(), only for debugging
+        let retVal = floor((size.width - (CGFloat(columnCount + 1) * itemSpacing)) / CGFloat(columnCount))
+        print("AspectVGrid: widthThatFits in size \(size) = \(retVal)")
+        
+        return retVal
     }
     
 }
