@@ -2,5 +2,6 @@
   "editor.rulers": [
     100
   ],
-  "files.trimTrailingWhitespace": false
+  "files.trimTrailingWhitespace": false,
+  "lldb.library": "/Applications/Xcode.app/Contents/SharedFrameworks/LLDB.framework/Versions/A/LLDB"
 }
