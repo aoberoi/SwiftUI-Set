@@ -105,10 +105,14 @@ struct SetGameView: View {
         .foregroundColor(.white)
     }
     
+    private func deckDepth(for card: SetGame.Card) -> Double {
+        Double(game.deck.firstIndex(of: card) ?? 0)
+    }
+    
     var deck: some View {
         ZStack {
             placeholderView(label: "Deck Empty")
-            PileView(items: game.deck) { card in
+            ForEach(game.deck) { card in
                 CardView(
                     card: card,
                     cardBorderColor: DrawingConstants.CardBorderColors.any,
@@ -116,7 +120,18 @@ struct SetGameView: View {
                     isFaceUp: false
                 )
                     .matchedGeometryEffect(id: card.id, in: cardMovement)
+                    .zIndex(deckDepth(for: card) * -1.0)
             }
+
+//            PileView(items: game.deck) { card in
+//                CardView(
+//                    card: card,
+//                    cardBorderColor: DrawingConstants.CardBorderColors.any,
+//                    hasThickBorder: false,
+//                    isFaceUp: false
+//                )
+//                    .matchedGeometryEffect(id: card.id, in: cardMovement)
+//            }
         }
         .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
     }

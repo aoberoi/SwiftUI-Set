@@ -17,6 +17,23 @@ All tasks are complete.
 
 1. Cards appear to be dealt from the bottom of the deck (the way the deck view is drawn).
 
+    It's not that they are dealt from the bottom, it's that the animation starting point has the
+    cards as transparent, and then they fade in as they move into position in the playArea.
+
+    Actually not sure about the above statement. The cards in the playArea are fading in (which
+    is why the symbols appear to fade in). The cards from the deck should be fading out. In this
+    case I'd expect to see the cards from the deck on top and the borders of those cards
+    overlapping. Instead, nothing seems to obscure the back of the top card on the deck. This could
+    be a zIndex() issue.
+
+    Using explicit .transition()s didn't seem to solve anything. The animations became weird. The
+    dealing animation completely went away and the new game animation didn't animate cards back
+    to the deck if they were going to be back in the visible cards later.
+
+    Found a solution that explicitly orders the cards in the deck by a zIndex. Would like to explore
+    how the ForEach's natural ordering was not working. As far as I understand, PileView reversed
+    the decks order so that the last card was correctly rendered underneath all the other cards.
+
 1. New game animations need to be divided into 2 or 3 non overlapping transactions. There are some
    issues observed which might all be solved by this kind of division. Examples of observed issues:
 
