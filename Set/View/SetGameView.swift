@@ -105,10 +105,6 @@ struct SetGameView: View {
         .foregroundColor(.white)
     }
     
-    private func deckDepth(for card: SetGame.Card) -> Double {
-        Double(game.deck.firstIndex(of: card) ?? 0)
-    }
-    
     var deck: some View {
         ZStack {
             placeholderView(label: "Deck Empty")
@@ -119,19 +115,9 @@ struct SetGameView: View {
                     hasThickBorder: false,
                     isFaceUp: false
                 )
+                    .zIndex(deckDepth(for: card) * -1)
                     .matchedGeometryEffect(id: card.id, in: cardMovement)
-                    .zIndex(deckDepth(for: card) * -1.0)
             }
-
-//            PileView(items: game.deck) { card in
-//                CardView(
-//                    card: card,
-//                    cardBorderColor: DrawingConstants.CardBorderColors.any,
-//                    hasThickBorder: false,
-//                    isFaceUp: false
-//                )
-//                    .matchedGeometryEffect(id: card.id, in: cardMovement)
-//            }
         }
         .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
     }
@@ -139,12 +125,13 @@ struct SetGameView: View {
     var discardPile: some View {
         ZStack {
             placeholderView(label: "Discard")
-            PileView(items: game.discardPile.reversed()) { card in
+            ForEach(game.discardPile) { card in
                 CardView(
                     card: card,
                     cardBorderColor: DrawingConstants.CardBorderColors.any,
                     hasThickBorder: false
                 )
+                    .zIndex(discardPileDepth(for: card) * -1)
                     .matchedGeometryEffect(id: card.id, in: cardMovement)
             }
         }
@@ -219,6 +206,14 @@ struct SetGameView: View {
     }
     
     // MARK: - Helpers
+    
+    private func deckDepth(for card: SetGame.Card) -> Double {
+        Double(game.deck.firstIndex(of: card) ?? 0)
+    }
+    
+    private func discardPileDepth(for card: SetGame.Card) -> Double {
+        Double(game.discardPile.firstIndex(of: card) ?? 0) * -1
+    }
 
     private func borderColor(for selectionState: SetGame.CardSelectionState) -> Color {
         switch selectionState {
