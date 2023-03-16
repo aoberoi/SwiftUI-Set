@@ -23,6 +23,26 @@ All tasks are complete.
       overlap. Ideally, there are two separate serial transactions so that all cards return to the
       deck before cards are dealt. Maybe you can even see a shuffle happen in the deck?
 
+      As far as I can tell, the SwiftUI animation system generates matchedGeometryEffect transitions
+      to perform based on insertion or deletion into views, regardless of which withAnimation block
+      (which I previously considered to be one transaction) those changes are made. This means that
+      non-overlapping animations won't really be treated as two separate transactions. EDIT: this
+      is wrong and I proved it in a sample app.
+
+      I'm pretty much out of theories for why this issue is occurring. I know how to pretty reliably
+      reproduce the issue. Here are some experiments I could try, that would hopefully allow me to
+      learn more:
+      * move the .matchedGeometryEffect() modifier to another part of the view hierarchy. there was
+        some vague mention in a Sean Allen video that this modifier should come before a .frame(),
+        but I'm not sure why and what the consequence would be.
+      * try using a Grid instead to of a LazyVGrid. better yet, try using a simple VStack or HStack
+        container to remove as much complexity as possible. i don't see why this would have an
+        impact, given the reproduction i've observed doesn't involve the column sizes changing (or
+        any noticeable layout changes).
+      * try implementing the animatable card flip transition anyway. not sure what this would do,
+        but maybe something new will be visually noticable since there wouldn't be as many opacity
+        transitions overlapping.
+
     * When pressing the new game button interrupts an animation of cards from the playArea moving
       to the discard pile, some issues have been observed. One or more cards may animate into the
       playArea from some place other than the deck and matchedCards, such as off to the right side
