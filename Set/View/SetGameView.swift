@@ -34,7 +34,9 @@ struct SetGameView: View {
                     .layoutPriority(1)
             }
             .background(Color(UIColor.systemGray5))
-            .onAppear(perform: dealInitialCards)
+            .onAppear {
+                dealInitialCards()
+            }
         }
     }
     
@@ -162,25 +164,37 @@ struct SetGameView: View {
     
     // MARK: - Actions
     
-    private func dealInitialCards() {
-        withAnimation(groupOfCards()) {
+    private func dealInitialCards(delay: Double = 0.0) {
+        // NOTE: the follow lines are for debugging
+        print("New deck:")
+        game.printGame()
+        
+        var dealDuration = 1.0
+        // NOTE: the following line is for debugging
+//        dealDuration = dealDuration * 5
+        var dealAnimation = Animation.easeInOut(duration: dealDuration)
+        if (delay > 0) {
+            dealAnimation = dealAnimation.delay(delay)
+        }
+        withAnimation(dealAnimation) {
             game.start()
         }
+        
+        // NOTE: the follow lines are for debugging
+        print("Game dealt:")
+        game.printGame()
     }
     
     private func newGame() {
-        print("BEFORE RESET:")
+        print("Game over:")
         game.printGame()
-        withAnimation(groupOfCards()) {
+        var resetDuration = 1.0
+        // NOTE: the following line is for debugging
+//        resetDuration = resetDuration * 5
+        withAnimation(.easeInOut(duration: resetDuration)) {
             game.reset()
         }
-        print("AFTER RESET, BEFORE START:")
-        game.printGame()
-        withAnimation(groupOfCards(afterGroups: 1)) {
-            game.start()
-        }
-        print("AFTER START:")
-        game.printGame()
+        dealInitialCards(delay: resetDuration + 0.1)
     }
     
     private func drawMoreCards() {
