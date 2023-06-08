@@ -58,21 +58,22 @@ struct SetGameView: View {
                 cardBorderColor: borderColor(for: selectionState),
                 hasThickBorder: selectionState.inSelection
         )
+            .zIndex(deckDepth(for: card) * -1)
             .matchedGeometryEffect(id: card.id, in: cardMovement)
-            .animation(.none, value: selectionState)
-            .shakeEffect(direction: .horizontal, pct: selectionState == .partOfMismatch ? 1 : 0)
-            .shakeEffect(direction: .vertical, pct: selectionState == .partOfMatch ? 1 : 0)
+//            .animation(.none, value: selectionState)
+//            .shakeEffect(direction: .horizontal, pct: selectionState == .partOfMismatch ? 1 : 0)
+//            .shakeEffect(direction: .vertical, pct: selectionState == .partOfMatch ? 1 : 0)
             // Using an implicit animation to separate the shakeEffect from the explicit animation
             // that occurs when a card is chosen. Making it conditional (where it can sometimes be
             // .none) allows the animation to become "one-way". The shake occurs when the
             // selectionState becomes part of a match or a mismatch, but not when the selectionState
             // goes back to being any of the other cases. The implicit animation above "resets" the
             // wrapped view so that it doesn't cascade this implicit animation to the wrapped views.
-            .animation(
-                selectionState == .partOfMatch || selectionState == .partOfMismatch ?
-                    .linear(duration: 0.2).repeatCount(2, autoreverses: false) : .none,
-                value: selectionState
-            )
+//            .animation(
+//                selectionState == .partOfMatch || selectionState == .partOfMismatch ?
+//                    .linear(duration: 0.2).repeatCount(2, autoreverses: false) : .none,
+//                value: selectionState
+//            )
             .onTapGesture(perform: choose(card))
     }
     
@@ -110,6 +111,7 @@ struct SetGameView: View {
     var deck: some View {
         ZStack {
             placeholderView(label: "Deck Empty")
+                .zIndex(Double(game.deck.count) * -1)
             ForEach(game.deck) { card in
                 CardView(
                     card: card,
@@ -127,6 +129,7 @@ struct SetGameView: View {
     var discardPile: some View {
         ZStack {
             placeholderView(label: "Discard")
+                .zIndex(Double(game.discardPile.count) * -1)
             ForEach(game.discardPile) { card in
                 CardView(
                     card: card,

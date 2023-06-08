@@ -23,18 +23,25 @@ All tasks are complete.
       overlap. Ideally, there are two separate serial transactions so that all cards return to the
       deck before cards are dealt. Maybe you can even see a shuffle happen in the deck?
 
-      As far as I can tell, the SwiftUI animation system generates matchedGeometryEffect transitions
-      to perform based on insertion or deletion into views, regardless of which withAnimation block
-      (which I previously considered to be one transaction) those changes are made. This means that
-      non-overlapping animations won't really be treated as two separate transactions. EDIT: this
-      is wrong and I proved it in a sample app.
+      Removing the ShakeEffect implicit animation (which also had the effect of changing the
+      animation timing of the border color on selectionState to partOfMatch and partOfMismatch from
+      instant to 1 second long) has mitigated this issue. It briefly made another issue, where the
+      placeholderView at the bottom of the deck was visible during the reset animation, visible.
+      That issue was also corrected using an explicit zIndex on the placeholderView.
+
+      Just to clean things up, every place cards show up are now given an explicit zIndex.
+
+      There must be some kind of modifier on cards in the playArea that is "overriding" the
+      matchedGeometryEffect. This could potentially explain why the animation for inserting card
+      views into the playArea seem wrong. One example of a modifier that could override is .frame()
+      but in theory, the .aspectRatio() modifier would override geometry changes. In general, let's
+      look for these kinds of modifiers on all containers of animated card views. A common solution
+      might be to move the geometry impacting modifiers to outside the matchedGeometryEffect. EDIT:
+      there doesn't seem to be any modifiers that are overriding the geometry effects.
 
       I'm pretty much out of theories for why this issue is occurring. I know how to pretty reliably
       reproduce the issue. Here are some experiments I could try, that would hopefully allow me to
       learn more:
-      * move the .matchedGeometryEffect() modifier to another part of the view hierarchy. there was
-        some vague mention in a Sean Allen video that this modifier should come before a .frame(),
-        but I'm not sure why and what the consequence would be.
       * try using a Grid instead to of a LazyVGrid. better yet, try using a simple VStack or HStack
         container to remove as much complexity as possible. i don't see why this would have an
         impact, given the reproduction i've observed doesn't involve the column sizes changing (or
@@ -51,12 +58,77 @@ All tasks are complete.
       that were moving from a place that wasn't expected were not necessarily in the matched
       selection. No conclusive link yet found to whether or not the card layout reflows.
 
+      The insertion animation into the deck, specifically the cards coming from the playArea, is
+      separated from the removal animation of cards from the playArea. This is best captured in
+      video, but the former animation shows cards that are moving from the original position in
+      playArea and fading in as the move towards the deck. The latter animation shows cards that
+      are positioned where they got during the interrupted animation (matched cards on their way
+      to the discard pile and unmatched cards reflowing in the grid) and fading out as they change
+      direction to go towards the deck. I don't think this will be fixed by implementing the card
+      flipping transition. I think the issue will become a lot less noticeable because the cards
+      in the insertion animation will not be visible for the first half of the animation and by
+      the time it is visible it will likely be very close to meeting the views in the removal
+      animation. However, ideally the geometry should be matched. I think this issue can be
+      recreated in a simpler sample app, and that can be used to investigate what's happening.
+
+      The layering order of the cards changes as soon as the New Game button is pressed. This most
+      likely has to do with the fact that game.reset() will initialize a new deck with the cards
+      shuffled into a new order. It seems like the best way to fix this might be to split
+      game.reset() into two methods (one that pulls all the cards back in their existing order back
+      to the deck and another that generates a new shuffled deck). Another way might be to use some
+      view-specific @State. This seems lower priority and might also look find one the card flipping
+      transition is implemented.
+
     * Related to above, when the playArea is scrollable and some of the top rows are not visible,
       and then pressing the new game button interrupts an animation of cards from the playArea
       moving to the discard pile, more issues are observed. Some cards animate into the playArea
       from the top during the time that all the cards are supposed to be animating to the deck. Then
       another animation occurs for dealing. Since there's so much going on here, the best way to
       capture it is with a video. There's a couple included in `resources`.
+
+      NOTE: since the change where implicit animations for ShakeEffect were removed, the cards
+      animating into the playArea from the top do not occur. However, the subset of cards that
+      should be animating into the deck actually animate to some place below the deck instead. The
+      subset is the cards that will are being dealt into the playArea for the new game. All of those
+      cards animate to the space below the deck (coming from the deck before new game, the playArea,
+      and the discard pile).
+
+      That same animation (cards moving into the deck) also has another issue. The animation of
+      cards coming from the playArea is split into two animations (like all matched geometry effect
+      transitions): the cards in playArea being removed and the cards in deck being inserted. It
+      seems like the cards in deck being inserted has a starting point back where the cards started
+      in the playArea after the matched cards were removed, as if the remaining cards had reflowed
+      into the grid. However the cards in the playArea being removed start animating from a place
+      mid reflow (that animation wasn't complete when the New Game button was pressed). The two
+      animations seem to meet at some point before flowing back to the deck.
+
+      There's a layering order problem like the one above.
+
+      Can this be reproduced in the portrait orientation? It was reproduced, but there's some new
+      and interesting issues that became apparent.
+      
+      Nothing is flying out into random places off screen (like it was when the ShakeEffect was
+      still present), but there were two cards that animated into the playArea while the rest of the
+      cards were animating into the deck. These two cards came from some off screen area above, and
+      they came in at the size and animated to the place they would be after the new game was dealt,
+      just before the rest of the cards were dealt for the new game. One of these two cards started
+      in the discard pile and the other in the play area. The card from the playArea just suddenly
+      disappeared instead of animating like the surrounding cards. Perhaps this issue is actually
+      related to the lazy grid.
+
+      In addition, when reproduced in the portrait orientation the cards had a significant sudden
+      jump in the animation position. And on top of that during the animation the zIndex of cards
+      in the grid were changing on nearly every frame. These were the cards that were reflowing when
+      the New Game button was pressed and it was only the half of the transition animation of the
+      cards being removed from the play area.
+
+      what does this all look like in the debugger?
+
+      maybe we should add explicit source: true to the matchedGeometryEffect and see if that makes
+      any difference.
+
+      i think it may be time to prototype an implementation using a Grid (or a simpler container)
+      to see if we can narrow the issues down to the LazyVGrid
 
 1. Dealing 3 more card animations should be one transaction. When the existing selection contains a
    match, moving the matched cards to the discard pile should be in the same transaction and result
@@ -67,31 +139,45 @@ All tasks are complete.
    size of item views needs to change (or more specifically the number of columns), then the update
    should be animated.
 
+   NOTE: since the change where implicit animations for ShakeEffect were removed, the layout changes
+   are animated.
+
 1. Fix the animation for choosing a card. No matter what duration is used, the change is immediate.
 
-1. Replace the animation for a complete selection of matched cards and a complete selection of
+   NOTE: since the change where the implicit animations for ShakeEffect were removed, the duration
+   is now whatever was set in the withAnimation block for the choose() method. That duration effects
+   all kinds of UI changes that can occur on a choose(), such as the movement of cards to the
+   discardPile. Ideally the durations of various kinds of updates are separated, but that might
+   require some more view-specific @State, or may be very complex. The selection state change
+   should feel immediate.
+
+2. Replace the animation for a complete selection of matched cards and a complete selection of
    unmatched cards. The color change is too subtle and it's not obvious what the colors mean.
 
-1. When dealing cards into the bottom of the ScrollView, make sure the ScrollView bottom is
+   NOTE: since the change where the implicit animations for ShakeEffect were removed, this became
+   even more subtle. The feedback should be immediate, and right now the duration is dictated by
+   the withAnimation block for the choose() method (similar to above).
+
+3. When dealing cards into the bottom of the ScrollView, make sure the ScrollView bottom is
    completely visible. Animate the scrolling at the same time as the cards being dealt.
 
-1. Factor out views so that `SetGameView` isn't so huge. Prime examples are the placeholder views,
+4. Factor out views so that `SetGameView` isn't so huge. Prime examples are the placeholder views,
    cardView, etc. This should done after animation issues are sorted out because refactoring before
    that point would probably be undone and redone.
 
-1. Implement card-by-card movement animations. This can be applied to the initial dealing of cards,
+5. Implement card-by-card movement animations. This can be applied to the initial dealing of cards,
    each time 3 new cards and dealt, when a match is moved to the discard pile, and when a new game
    is started. One technique is to use view @State to keep track of which cards are not yet moved.
    This technique is demonstrated in Lecture 8 around 36:45.
 
-1. Make the card piles have depth and messy looking. Show the number of cards left in the deck, and
+6. Make the card piles have depth and messy looking. Show the number of cards left in the deck, and
    possibly the number of matched cards.
 
-1.  Implement a constraint on the card size in `playArea` by reading the width of cards in
+7.  Implement a constraint on the card size in `playArea` by reading the width of cards in
    `controls` and using that as the minimum width. Prototype using `LayoutValueKey` and custom
    layout.
 
-1. Nice-to-have iOS 16 updates
+8. Nice-to-have iOS 16 updates
     a. Update minimum iOS target (if not done already)
     a. Remove landscape previews
     a. Evaluate how the views perform in different dynamic type sizes
