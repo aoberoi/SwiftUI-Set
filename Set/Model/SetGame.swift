@@ -2,32 +2,29 @@
 //  SetGame.swift
 //  Set
 //
-//  Created by Ankur Oberoi on 8/6/21.
+//  Created by Ankur Oberoi on 3/13/24.
 //
 
 import Foundation
+import Observation
 
-class SetGame : ObservableObject {
+@Observable
+class SetGame {
     typealias Card = Set.Card
     
-    @Published private var gameModel = Set()
+    var gameModel = Set()
     
     var deck: [Card] { gameModel.deck }
     var visibleCards: [Card] { gameModel.visibleCards }
     var discardPile: [Card] { gameModel.discardPile }
     
+    // Card selection state
     var matchIsSelected: Bool { gameModel.matchIsSelected }
-    var totalMatchedCards: Int { gameModel.discardPile.count }
-    var isOver: Bool { gameModel.isOver }
     
     func selectionState(for card: Card) -> CardSelectionState {
         guard gameModel.isSelected(card: card) else { return .unselected }
         guard gameModel.selectionIsComplete else { return .partOfIncomplete }
-        
-        if gameModel.matchIsSelected {
-            return .partOfMatch
-        }
-        return .partOfMismatch
+        return gameModel.matchIsSelected ? .partOfMatch : .partOfMismatch
     }
     
     enum CardSelectionState {
@@ -38,8 +35,11 @@ class SetGame : ObservableObject {
         }
     }
     
+    // Game Over
+    var isOver: Bool { gameModel.isOver }
+    var totalMatchedCards: Int { gameModel.discardPile.count }
     
-    // MARK: Intents
+    // MARK: - Intents
     
     func start() {
         gameModel.start()

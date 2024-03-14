@@ -1,16 +1,16 @@
 //
-//  ContentView.swift
+//  SetGameView.swift
 //  Set
 //
-//  Created by Ankur Oberoi on 8/6/21.
+//  Created by Ankur Oberoi on 3/9/24.
 //
 
 import SwiftUI
 
 struct SetGameView: View {
-    @ObservedObject var game: SetGame
+    @Environment(SetGame.self) private var game
     
-    // Every card is identifable and each card is only ever in the view heirarchy once. Therefore
+    // Every card is identifiable and each card is only ever in the view hierarchy once. Therefore
     // we only need one namespace to track card movement.
     @Namespace private var cardMovement
     
@@ -55,7 +55,7 @@ struct SetGameView: View {
         let selectionState = game.selectionState(for: card)
         return CardView(
                 card: card,
-                cardBorderColor: borderColor(for: selectionState),
+                borderColor: borderColor(for: selectionState),
                 hasThickBorder: selectionState.inSelection
         )
             .matchedGeometryEffect(id: card.id, in: cardMovement)
@@ -113,7 +113,7 @@ struct SetGameView: View {
             ForEach(game.deck) { card in
                 CardView(
                     card: card,
-                    cardBorderColor: DrawingConstants.CardBorderColors.any,
+                    borderColor: DrawingConstants.CardBorderColors.any,
                     hasThickBorder: false,
                     isFaceUp: false
                 )
@@ -130,7 +130,7 @@ struct SetGameView: View {
             ForEach(game.discardPile) { card in
                 CardView(
                     card: card,
-                    cardBorderColor: DrawingConstants.CardBorderColors.any,
+                    borderColor: DrawingConstants.CardBorderColors.any,
                     hasThickBorder: false
                 )
                     .zIndex(discardPileDepth(for: card) * -1)
@@ -150,7 +150,7 @@ struct SetGameView: View {
                     .font(.caption.bold())
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 RoundedRectangle(
-                    cornerRadius: CardView.DrawingConstants.paperCornerRadiusRatio * smallestDimension
+                    cornerRadius: 10 // TODO: replace CardView.DrawingConstants.paperCornerRadiusRatio * smallestDimension
                 )
                     .strokeBorder(style: StrokeStyle(
                         lineWidth: DrawingConstants.placeholderLineWidthRatio * smallestDimension,
@@ -161,7 +161,7 @@ struct SetGameView: View {
             .foregroundColor(Color(UIColor.systemBackground))
         }
     }
-    
+
     // MARK: - Actions
     
     private func dealInitialCards(delay: Double = 0.0) {
@@ -279,13 +279,7 @@ struct SetGameView: View {
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        let game = SetGame()
-        return Group {
-            SetGameView(game: game)
-            SetGameView(game: game)
-                .previewInterfaceOrientation(InterfaceOrientation.landscapeLeft)
-        }
-    }
+#Preview {
+    SetGameView()
+        .environment(SetGame())
 }

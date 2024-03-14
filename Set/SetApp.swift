@@ -2,18 +2,19 @@
 //  SetApp.swift
 //  Set
 //
-//  Created by Ankur Oberoi on 8/6/21.
+//  Created by Ankur Oberoi on 3/9/24.
 //
 
 import SwiftUI
 
 @main
 struct SetApp: App {
-    private let game = SetGame()
+    @State private var game = SetGame()
     
     var body: some Scene {
         WindowGroup {
-            SetGameView(game: game)
+            SetGameView()
+                .environment(game)
         }
     }
 }

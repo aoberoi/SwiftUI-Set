@@ -2,7 +2,7 @@
 //  Set.swift
 //  Set
 //
-//  Created by Ankur Oberoi on 8/6/21.
+//  Created by Ankur Oberoi on 3/14/24.
 //
 
 import Foundation
@@ -39,11 +39,11 @@ struct Set: CustomStringConvertible {
     var discardPile: [Card] = []
     
     // NOTE: this is kind of weird, because there's a copy of the card in this property. it may
-    // make more sense to just store the IDs or the indicies of the selection based on the
+    // make more sense to just store the IDs or the indices of the selection based on the
     // visibleCards array (selected cards should always be a subset of the visible cards). let's
     // revisit this after we check how the view code uses this property. there could even be a
     // computed property that returns the selected cards based on a stored property which only has
-    // the indicies. or maybe the selection could be a whole different model or view model?
+    // the indices. or maybe the selection could be a whole different model or view model?
     private var selectedCards: Swift.Set<Card> = []
     
     public var selectionIsComplete: Bool {
@@ -96,7 +96,7 @@ struct Set: CustomStringConvertible {
         guard !isOver else { return }
         guard visibleCards.contains(card) else { return }
         
-        if selectedCards.count < 3 {
+        if !selectionIsComplete {
             if selectedCards.contains(card) {
                 selectedCards.remove(card)
             } else {

@@ -1,18 +1,22 @@
 //
 //  AspectVGrid.swift
-//  Memorize
+//  Set
 //
-//  Created by CS193p Instructor on 4/14/21.
-//  Copyright Stanford University 2021
+//  Created by Ankur Oberoi on 3/13/24.
 //
 
 import SwiftUI
 
 struct AspectVGrid<Item: Identifiable, ItemView: View>: View {
     let items: [Item]
+    
     let aspectRatio: CGFloat
+    
     let minItemWidth: CGFloat
+    
+    /// The space between columns and rows of items, and padding surrounding the items.
     let itemSpacing: CGFloat
+    
     let content: (Item) -> ItemView
     
     var body: some View {
@@ -24,28 +28,27 @@ struct AspectVGrid<Item: Identifiable, ItemView: View>: View {
                         content(item).aspectRatio(aspectRatio, contentMode: .fit)
                     }
                 }
-                // TODO: Remove the following border, only for debugging.
-//                .border(Color.red)
                 .padding(itemSpacing)
-                // TODO: this causes a strange jump in the change of the height of the frame when the number of columns changes
-                //.frame(minHeight: geometry.size.height)
             }
         }
     }
     
     private func adaptiveGridItem(width: CGFloat) -> GridItem {
+        // An adaptively sized GridItem represents many items. In this usage, it represents the
+        // width of items in many columns. Practically, the minimum width is actually the exact
+        // width for items because it was calculated using widthThatFits().
         var gridItem = GridItem(.adaptive(minimum: width))
         gridItem.spacing = itemSpacing
         return gridItem
     }
     
-    // looking for the biggest item width such that all the items can fit in the size provided. that item width
-    // then becomes the minimum width for the GridItem
+    // looking for the biggest item width such that all the items can fit in the size provided. that
+    // item width then becomes the minimum width for the GridItem
     private func widthThatFits(in size: CGSize) -> CGFloat {
         let itemCount = items.count
         
-        // Looking for the right column count such that all the items can fit into the available height.
-        // In the worst case, we'll get to all the items in a single row.
+        // Looking for the right column count such that all the items can fit into the available
+        // height. In the worst case, we'll get to all the items in a single row.
         var columnCount = 1
         var rowCount = itemCount
         repeat {
@@ -57,7 +60,8 @@ struct AspectVGrid<Item: Identifiable, ItemView: View>: View {
             }
             // otherwise, let's try one more column
             columnCount += 1
-            // and this is how many rows that would require (rounding up when it doesn't divide evenly)
+            // and this is how many rows that would require (rounding up when it doesn't divide
+            // evenly)
             rowCount = (itemCount + (columnCount - 1)) / columnCount
         } while columnCount < itemCount
         
@@ -69,3 +73,8 @@ struct AspectVGrid<Item: Identifiable, ItemView: View>: View {
     }
     
 }
+
+// TODO: Would a preview for this view be helpful?
+//#Preview {
+//    AspectVGrid()
+//}

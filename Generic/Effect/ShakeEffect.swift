@@ -2,7 +2,7 @@
 //  ShakeEffect.swift
 //  Set
 //
-//  Created by Ankur Oberoi on 1/21/22.
+//  Created by Ankur Oberoi on 3/14/24.
 //
 
 import SwiftUI
@@ -37,3 +37,4 @@ extension View {
         modifier(ShakeEffect(direction: direction, distance: distance, pct: pct))
     }
 }
+
