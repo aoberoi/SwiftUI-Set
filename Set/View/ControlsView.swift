@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-// TODO: FIRST the preview crashes
-
 struct ControlsView: View {
     @Environment(SetGame.self) private var game
     
@@ -76,7 +74,9 @@ struct ControlsView: View {
     }
 }
 
-#Preview {
+// TODO: can we put these previews in to 1/4 size containers in both landscape and portrait?
+
+#Preview("Fit", traits: .sizeThatFitsLayout) {
     ControlsView(
         drawCardsDuration: 0.1,
         resetCardsDuration: 0.1,
@@ -84,4 +84,29 @@ struct ControlsView: View {
         cardAspectRatio: 2/1,
         cardBorderColor: .accentColor
     )
+    .environment(SetGame())
 }
+
+#Preview("Portrait", traits: .portrait) {
+    ControlsView(
+        drawCardsDuration: 0.1,
+        resetCardsDuration: 0.1,
+        discardCardsDuration: 0.1,
+        cardAspectRatio: 2/1,
+        cardBorderColor: .accentColor
+    )
+    .environment(SetGame())
+}
+
+#Preview("Landscape", traits: .landscapeLeft) {
+    ControlsView(
+        drawCardsDuration: 0.1,
+        resetCardsDuration: 0.1,
+        discardCardsDuration: 0.1,
+        cardAspectRatio: 2/1,
+        cardBorderColor: .accentColor
+    )
+    .environment(SetGame())
+}
+
+
