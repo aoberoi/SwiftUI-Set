@@ -24,18 +24,33 @@ struct SetGameView: View {
             // does not work this way. The modifier limits the height proposed to controls, but then
             // takes up the remaining space up to that maxHeight anyway. This implementation
             // achieves the same result, but with a less clear expression.
+            // TODO: wrap up the above behavior into a generic view
             VStack(spacing: 0) {
                 ZStack {
                     playArea
                     endGame
                 }
                     .frame(minHeight: geometry.size.height * (3 / 4))
-                controls
+                // TODO: can some of these be passed through the environment?
+                ControlsView(
+                    // TODO: maybe the drawCardsAnimation should be stored and passed in instead of
+                    // just a duration. All of the other durations are the same, so the animations
+                    // can all be the same. Also, maybe these can be read through the environment?
+                    // Can the ControlsView supply its own defaultValue? If so, this would be useful
+                    // in other cases (like the Namespace.ID issue).
+                    drawCardsDuration: AnimationConstants.drawCardsDuration,
+                    resetCardsDuration: AnimationConstants.resetCardsDuration,
+                    discardCardsDuration: AnimationConstants.discardCardsDuration,
+                    cardAspectRatio: DrawingConstants.cardAspectRatio,
+                    cardBorderColor: DrawingConstants.CardBorderColors.any
+                )
                     .layoutPriority(1)
             }
-            .background(Color(UIColor.systemGray5))
+            .cardMovementNamespace(cardMovement)
             .onAppear {
-                dealInitialCards()
+                withAnimation(.easeInOut(duration: AnimationConstants.drawCardsDuration)) {
+                    game.start()
+                }
             }
         }
     }
@@ -49,6 +64,7 @@ struct SetGameView: View {
         ) { card in
             cardView(for: card)
         }
+        .background(DrawingConstants.playAreaBackgroundColor)
     }
     
     private func cardView(for card: SetGame.Card) -> some View {
@@ -60,6 +76,8 @@ struct SetGameView: View {
         )
             .matchedGeometryEffect(id: card.id, in: cardMovement)
             .animation(.none, value: selectionState)
+            // TODO: Should we use the new phaseAnimator or keyframeAnimator to accomplish this?
+            // TODO: Should we use the new scoped implicit animation view modifiers?
             .shakeEffect(direction: .horizontal, pct: selectionState == .partOfMismatch ? 1 : 0)
             .shakeEffect(direction: .vertical, pct: selectionState == .partOfMatch ? 1 : 0)
             // Using an implicit animation to separate the shakeEffect from the explicit animation
@@ -78,6 +96,7 @@ struct SetGameView: View {
     
     @ViewBuilder
     private var endGame: some View {
+        // TODO: is there a sheet view that makes more sense here?
         if game.isOver {
             VStack {
                 Text("Game Over")
@@ -90,145 +109,22 @@ struct SetGameView: View {
             .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8.0))
         }
     }
-    
-    var controls: some View {
-        // NOTE: A custom layout could be used to better express that each of the 3 children of
-        // the HStack should take up equal width, and it should take up all the width offered.
-        HStack {
-            deck.onTapGesture(perform: drawMoreCards)
-                .frame(maxWidth: .infinity)
-            Button("New Game", action: newGame)
-                .frame(maxWidth: .infinity)
-            discardPile
-                .frame(maxWidth: .infinity)
-        }
-        .padding()
-        .background(Color("FeltGreen"))
-        .foregroundColor(.white)
-    }
-    
-    var deck: some View {
-        ZStack {
-            placeholderView(label: "Deck Empty")
-            ForEach(game.deck) { card in
-                CardView(
-                    card: card,
-                    borderColor: DrawingConstants.CardBorderColors.any,
-                    hasThickBorder: false,
-                    isFaceUp: false
-                )
-                    .zIndex(deckDepth(for: card) * -1)
-                    .matchedGeometryEffect(id: card.id, in: cardMovement)
-            }
-        }
-        .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
-    }
-    
-    var discardPile: some View {
-        ZStack {
-            placeholderView(label: "Discard")
-            ForEach(game.discardPile) { card in
-                CardView(
-                    card: card,
-                    borderColor: DrawingConstants.CardBorderColors.any,
-                    hasThickBorder: false
-                )
-                    .zIndex(discardPileDepth(for: card) * -1)
-                    .matchedGeometryEffect(id: card.id, in: cardMovement)
-            }
-        }
-        .aspectRatio(DrawingConstants.cardAspectRatio, contentMode: .fit)
-    }
-    
-    private func placeholderView(label: String? = nil) -> some View {
-        GeometryReader { geometry in
-            ZStack {
-                let smallestDimension = min(geometry.size.height, geometry.size.width)
-                let dashLength = smallestDimension * DrawingConstants.placeholderDashLengthRatio
-                Text(label ?? "").opacity(label == nil ? 0 : 1)
-                    .textCase(.uppercase)
-                    .font(.caption.bold())
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                RoundedRectangle(
-                    cornerRadius: 10 // TODO: replace CardView.DrawingConstants.paperCornerRadiusRatio * smallestDimension
-                )
-                    .strokeBorder(style: StrokeStyle(
-                        lineWidth: DrawingConstants.placeholderLineWidthRatio * smallestDimension,
-                        dash: [dashLength, dashLength]
-                    ))
-            }
-            .opacity(DrawingConstants.placeholderOpacity)
-            .foregroundColor(Color(UIColor.systemBackground))
-        }
-    }
 
     // MARK: - Actions
     
-    private func dealInitialCards(delay: Double = 0.0) {
-        // NOTE: the follow lines are for debugging
-        print("New deck:")
-        game.printGame()
-        
-        var dealDuration = 1.0
-        // NOTE: the following line is for debugging
-//        dealDuration = dealDuration * 5
-        var dealAnimation = Animation.easeInOut(duration: dealDuration)
-        if (delay > 0) {
-            dealAnimation = dealAnimation.delay(delay)
-        }
-        withAnimation(dealAnimation) {
-            game.start()
-        }
-        
-        // NOTE: the follow lines are for debugging
-        print("Game dealt:")
-        game.printGame()
-    }
-    
-    private func newGame() {
-        print("Game over:")
-        game.printGame()
-        var resetDuration = 1.0
-        // NOTE: the following line is for debugging
-//        resetDuration = resetDuration * 5
-        withAnimation(.easeInOut(duration: resetDuration)) {
-            game.reset()
-        }
-        dealInitialCards(delay: resetDuration + 0.1)
-    }
-    
-    private func drawMoreCards() {
-        let willDiscard = game.matchIsSelected
-        withAnimation(groupOfCards()) {
-            game.discardPotentialMatch()
-        }
-        withAnimation(
-            groupOfCards().delay(willDiscard ? AnimationConstants.concurrentMoveDelay : 0)
-        ) {
-            game.draw()
-        }
-    }
-    
     private func choose(_ card: SetGame.Card) -> (() -> Void) {
-        // TODO: do i need to capture a weak self? is there a possible memory cycle? how does this
+        // TODO: SECOND do i need to capture a weak self? is there a possible memory cycle? how does this
         // interact with @escaping?
         return {
-            withAnimation(groupOfCards()) {
+            withAnimation(.easeInOut(duration: AnimationConstants.discardCardsDuration)) {
                 game.choose(card: card)
             }
         }
     }
     
     // MARK: - Helpers
-    
-    private func deckDepth(for card: SetGame.Card) -> Double {
-        Double(game.deck.firstIndex(of: card) ?? 0)
-    }
-    
-    private func discardPileDepth(for card: SetGame.Card) -> Double {
-        Double(game.discardPile.firstIndex(of: card) ?? 0) * -1
-    }
 
+    // TODO: Does this belong in the ViewModel?
     private func borderColor(for selectionState: SetGame.CardSelectionState) -> Color {
         switch selectionState {
         case .unselected:
@@ -243,13 +139,13 @@ struct SetGameView: View {
     }
     
     struct DrawingConstants {
+        // The systemGray UIColors do adjust for light mode and dark mode.
+        // TODO: does it make sense to put these in the asset catalog?
+        static let playAreaBackgroundColor: Color = Color(UIColor.systemGray5)
+        
         static let cardPadding: CGFloat = 8.0
         static let minimumCardWidth: CGFloat = 100.0
         static let cardAspectRatio: CGFloat = 2/1
-        
-        static let placeholderLineWidthRatio: CGFloat = 0.07
-        static let placeholderDashLengthRatio: CGFloat = 0.1
-        static let placeholderOpacity: Double = 0.5
         
         struct CardBorderColors {
             static let any: Color = .accentColor
@@ -259,23 +155,18 @@ struct SetGameView: View {
         }
     }
     
-    private func groupOfCards(afterGroups: Int = 0) -> Animation {
-        Animation
-            .easeInOut(duration: AnimationConstants.moveGroupOfCardsDuration)
-            .delay(Double(afterGroups) * AnimationConstants.moveGroupOfCardsDuration)
-    }
-    
-    // TODO: use this method to build dealing animations that move individual cards at a time
-    private func dealingAnimation(for index: Int) -> Animation {
-        let delay = AnimationConstants.dealDelayPerCard * Double(index)
-        return Animation.easeInOut(duration: AnimationConstants.dealACardDuration).delay(delay)
-    }
-
+    // TODO: BEFORE DRAWING CONSTANTS use this method to build dealing animations that move
+    // individual cards at a time. Can this be done with a custom animation?? Maybe a phase animator
+    // because it can iterate over a sequence?
+//    private func dealingAnimation(for index: Int) -> Animation {
+//        let delay = AnimationConstants.dealDelayPerCard * Double(index)
+//        return Animation.easeInOut(duration: AnimationConstants.dealACardDuration).delay(delay)
+//    }
+//
     struct AnimationConstants {
-        static let moveGroupOfCardsDuration: Double = 1.0
-        static let concurrentMoveDelay: Double = 0.5
-        static let dealACardDuration: Double = 0.25
-        static let dealDelayPerCard: Double = 0.25
+        static let drawCardsDuration: Double = 1.0
+        static let resetCardsDuration: Double = 1.0
+        static let discardCardsDuration: Double = 1.0
     }
 }
 

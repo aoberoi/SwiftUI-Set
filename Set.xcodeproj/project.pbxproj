@@ -23,6 +23,10 @@
 		92BC80372BA2E15900E2D778 /* Diamond.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BC80362BA2E15900E2D778 /* Diamond.swift */; };
 		92BC803B2BA2E33800E2D778 /* Set.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BC803A2BA2E33800E2D778 /* Set.swift */; };
 		92BC803F2BA370B700E2D778 /* Extensions_CoreGraphics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BC803E2BA370B600E2D778 /* Extensions_CoreGraphics.swift */; };
+		92BC80412BA3773800E2D778 /* ControlsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BC80402BA3773800E2D778 /* ControlsView.swift */; };
+		92BC80432BA37F8000E2D778 /* CardPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BC80422BA37F8000E2D778 /* CardPlaceholder.swift */; };
+		92BC80452BA3BD7A00E2D778 /* CardPile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BC80442BA3BD7A00E2D778 /* CardPile.swift */; };
+		92BC80612BA82A5D00E2D778 /* CardMovement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BC80602BA82A5D00E2D778 /* CardMovement.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +46,10 @@
 		92BC80362BA2E15900E2D778 /* Diamond.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Diamond.swift; sourceTree = "<group>"; };
 		92BC803A2BA2E33800E2D778 /* Set.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Set.swift; sourceTree = "<group>"; };
 		92BC803E2BA370B600E2D778 /* Extensions_CoreGraphics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions_CoreGraphics.swift; sourceTree = "<group>"; };
+		92BC80402BA3773800E2D778 /* ControlsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlsView.swift; sourceTree = "<group>"; };
+		92BC80422BA37F8000E2D778 /* CardPlaceholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardPlaceholder.swift; sourceTree = "<group>"; };
+		92BC80442BA3BD7A00E2D778 /* CardPile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardPile.swift; sourceTree = "<group>"; };
+		92BC80602BA82A5D00E2D778 /* CardMovement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardMovement.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +106,10 @@
 			children = (
 				92185D142B9CEDC700C5109B /* SetGameView.swift */,
 				92BC802A2BA2DC7300E2D778 /* Card */,
+				92BC80402BA3773800E2D778 /* ControlsView.swift */,
+				92BC80442BA3BD7A00E2D778 /* CardPile.swift */,
+				92BC80422BA37F8000E2D778 /* CardPlaceholder.swift */,
+				92BC80602BA82A5D00E2D778 /* CardMovement.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -250,6 +262,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				92BC80412BA3773800E2D778 /* ControlsView.swift in Sources */,
 				92BC80252BA2AA5000E2D778 /* AspectVGrid.swift in Sources */,
 				92185D152B9CEDC700C5109B /* SetGameView.swift in Sources */,
 				92BC80222BA28E9500E2D778 /* SetGame.swift in Sources */,
@@ -258,11 +271,14 @@
 				92BC80272BA2DBEC00E2D778 /* ShakeEffect.swift in Sources */,
 				92BC802C2BA2DC8600E2D778 /* CardView.swift in Sources */,
 				92185D132B9CEDC700C5109B /* SetApp.swift in Sources */,
+				92BC80432BA37F8000E2D778 /* CardPlaceholder.swift in Sources */,
 				92BC802E2BA2DD8000E2D778 /* CardBackground.swift in Sources */,
 				92BC803B2BA2E33800E2D778 /* Set.swift in Sources */,
 				92BC80302BA2DF8E00E2D778 /* CardSymbols.swift in Sources */,
+				92BC80452BA3BD7A00E2D778 /* CardPile.swift in Sources */,
 				92BC80352BA2E11600E2D778 /* TriState.swift in Sources */,
 				92BC80372BA2E15900E2D778 /* Diamond.swift in Sources */,
+				92BC80612BA82A5D00E2D778 /* CardMovement.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

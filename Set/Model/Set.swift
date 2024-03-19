@@ -9,6 +9,7 @@ import Foundation
 import Algorithms
 
 struct Set: CustomStringConvertible {
+    // TODO: move description stuff into a separate extension (is there some protocol?)
     var description: String {
         """
         Deck: \(Set.describeCards(deck))

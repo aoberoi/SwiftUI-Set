@@ -13,6 +13,9 @@ import SwiftUI
 /// aspect ratio of each card, and keeps them all consistent. NOTE: AspectVGrid might be refactored to be implemented with
 /// the new Grid view. This could impact how aspect ratios are enforced.
 struct CardView: View {
+    
+    // TODO: should CardView be able to reach out directly to the ViewModel in order to figure out
+    // properties like the border color, width, and whether or not it is faceUp?
     let card: SetGame.Card
     // TODO: this may also not be necessary, since we can just use .accentColor
     let borderColor: Color
