@@ -23,24 +23,18 @@ struct SetGameView: View {
                 endGame
             },
             lower:
-                // TODO: can some of these be passed through the environment?
                 ControlsView(
-                    // TODO: maybe the drawCardsAnimation should be stored and passed in instead of
-                    // just a duration. All of the other durations are the same, so the animations
-                    // can all be the same. Also, maybe these can be read through the environment?
-                    // Can the ControlsView supply its own defaultValue? If so, this would be useful
-                    // in other cases (like the Namespace.ID issue).
-                    drawCardsDuration: AnimationConstants.drawCardsDuration,
-                    resetCardsDuration: AnimationConstants.resetCardsDuration,
-                    discardCardsDuration: AnimationConstants.discardCardsDuration,
+                    cardFlyingAnimation: AnimationConstants.cardFlyingAnimation,
+                    cardFlyingDuration: AnimationConstants.cardFlyingDuration,
                     cardAspectRatio: DrawingConstants.cardAspectRatio,
+                    // TODO: A function in the environment to find the border color for a card?
                     cardBorderColor: DrawingConstants.CardBorderColors.any
                 ),
-            lowerMaxProportionOfHeight: 1/4
+            lowerMaxProportionOfHeight: DrawingConstants.maxProportionOfControlsHeight
         )
         .cardMovementNamespace(cardMovement)
         .onAppear {
-            withAnimation(.easeInOut(duration: AnimationConstants.drawCardsDuration)) {
+            withAnimation(AnimationConstants.cardFlyingAnimation) {
                 game.start()
             }
         }
@@ -83,7 +77,7 @@ struct SetGameView: View {
                 value: selectionState
             )
             .onTapGesture {
-                withAnimation(.easeInOut(duration: AnimationConstants.discardCardsDuration)) {
+                withAnimation(AnimationConstants.cardFlyingAnimation) {
                     game.choose(card: card)
                 }
             }
@@ -107,7 +101,8 @@ struct SetGameView: View {
     
     // MARK: - Helpers
 
-    // TODO: Does this belong in the ViewModel?
+    // TODO: make this function take a card as the argument and then make the function available
+    // through the environment?
     private func borderColor(for selectionState: SetGame.CardSelectionState) -> Color {
         switch selectionState {
         case .unselected:
@@ -125,6 +120,7 @@ struct SetGameView: View {
         static let cardPadding: CGFloat = 8.0
         static let minimumCardWidth: CGFloat = 100.0
         static let cardAspectRatio: CGFloat = 2/1
+        static let maxProportionOfControlsHeight: Double = 1/4
         
         struct CardBorderColors {
             static let any: Color = .accentColor
@@ -134,18 +130,14 @@ struct SetGameView: View {
         }
     }
     
-    // TODO: BEFORE DRAWING CONSTANTS use this method to build dealing animations that move
-    // individual cards at a time. Can this be done with a custom animation?? Maybe a phase animator
-    // because it can iterate over a sequence?
-//    private func dealingAnimation(for index: Int) -> Animation {
-//        let delay = AnimationConstants.dealDelayPerCard * Double(index)
-//        return Animation.easeInOut(duration: AnimationConstants.dealACardDuration).delay(delay)
-//    }
-//
     struct AnimationConstants {
-        static let drawCardsDuration: Double = 1.0
-        static let resetCardsDuration: Double = 1.0
-        static let discardCardsDuration: Double = 1.0
+        // TODO: Defining both of these constants is not optimal. They are separated in order
+        // to implement staged/chained animations in an ad-hoc manner (see ControlView). These
+        // chained animations could be cleaner, and allow for more dynamic situations (such as a
+        // group of cards flying in a staggered way) using custom animations. Also worth
+        // investigating phaseAnimator or keyframeAnimator.
+        static let cardFlyingDuration: Double = 1.0
+        static let cardFlyingAnimation: Animation = .easeInOut(duration: cardFlyingDuration)
     }
 }
 

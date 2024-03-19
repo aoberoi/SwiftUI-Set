@@ -10,12 +10,10 @@ import SwiftUI
 struct ControlsView: View {
     @Environment(SetGame.self) private var game
     
-    let drawCardsDuration: Double
-    let resetCardsDuration: Double
-    let discardCardsDuration: Double
+    let cardFlyingAnimation: Animation
+    let cardFlyingDuration: Double
     
     let cardAspectRatio: CGFloat
-    
     let cardBorderColor: Color
     
     var body: some View {
@@ -54,57 +52,50 @@ struct ControlsView: View {
     
     private func drawMoreCards() {
         let willDiscard = game.matchIsSelected
-        withAnimation(.easeInOut(duration: discardCardsDuration)) {
+        withAnimation(cardFlyingAnimation) {
             game.discardPotentialMatch()
         }
         withAnimation(
-            .easeInOut(duration: drawCardsDuration).delay(willDiscard ? discardCardsDuration : 0)
+            cardFlyingAnimation.delay(willDiscard ? cardFlyingDuration : 0)
         ) {
             game.draw()
         }
     }
     
     private func newGame() {
-        withAnimation(.easeInOut(duration: resetCardsDuration)) {
+        withAnimation(cardFlyingAnimation) {
             game.reset()
         }
-        withAnimation(.easeInOut(duration: drawCardsDuration).delay(resetCardsDuration)) {
+        withAnimation(cardFlyingAnimation.delay(cardFlyingDuration)) {
             game.start()
         }
     }
 }
 
-// TODO: can we put these previews in to 1/4 size containers in both landscape and portrait?
-
-#Preview("Fit", traits: .sizeThatFitsLayout) {
-    ControlsView(
-        drawCardsDuration: 0.1,
-        resetCardsDuration: 0.1,
-        discardCardsDuration: 0.1,
-        cardAspectRatio: 2/1,
-        cardBorderColor: .accentColor
-    )
-    .environment(SetGame())
-}
-
 #Preview("Portrait", traits: .portrait) {
-    ControlsView(
-        drawCardsDuration: 0.1,
-        resetCardsDuration: 0.1,
-        discardCardsDuration: 0.1,
-        cardAspectRatio: 2/1,
-        cardBorderColor: .accentColor
+    VerticalSplitWithHeightLimitOnLower(
+        upper: Rectangle(),
+        lower: ControlsView(
+            cardFlyingAnimation: .default,
+            cardFlyingDuration: 0.0,
+            cardAspectRatio: 2/1,
+            cardBorderColor: .accentColor
+        ),
+        lowerMaxProportionOfHeight: 1/4
     )
     .environment(SetGame())
 }
 
 #Preview("Landscape", traits: .landscapeLeft) {
-    ControlsView(
-        drawCardsDuration: 0.1,
-        resetCardsDuration: 0.1,
-        discardCardsDuration: 0.1,
-        cardAspectRatio: 2/1,
-        cardBorderColor: .accentColor
+    VerticalSplitWithHeightLimitOnLower(
+        upper: Rectangle(),
+        lower: ControlsView(
+            cardFlyingAnimation: .default,
+            cardFlyingDuration: 0.0,
+            cardAspectRatio: 2/1,
+            cardBorderColor: .accentColor
+        ),
+        lowerMaxProportionOfHeight: 1/4
     )
     .environment(SetGame())
 }
