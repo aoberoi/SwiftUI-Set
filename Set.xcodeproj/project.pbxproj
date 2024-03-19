@@ -27,6 +27,7 @@
 		92BC80432BA37F8000E2D778 /* CardPlaceholder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BC80422BA37F8000E2D778 /* CardPlaceholder.swift */; };
 		92BC80452BA3BD7A00E2D778 /* CardPile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BC80442BA3BD7A00E2D778 /* CardPile.swift */; };
 		92BC80612BA82A5D00E2D778 /* CardMovement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BC80602BA82A5D00E2D778 /* CardMovement.swift */; };
+		92BC80982BAA3F3F00E2D778 /* VerticalSplitWithHeightLimitOnLower.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92BC80972BAA3F3F00E2D778 /* VerticalSplitWithHeightLimitOnLower.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +51,7 @@
 		92BC80422BA37F8000E2D778 /* CardPlaceholder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardPlaceholder.swift; sourceTree = "<group>"; };
 		92BC80442BA3BD7A00E2D778 /* CardPile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardPile.swift; sourceTree = "<group>"; };
 		92BC80602BA82A5D00E2D778 /* CardMovement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardMovement.swift; sourceTree = "<group>"; };
+		92BC80972BAA3F3F00E2D778 /* VerticalSplitWithHeightLimitOnLower.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalSplitWithHeightLimitOnLower.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,6 +132,7 @@
 			isa = PBXGroup;
 			children = (
 				92BC80242BA2AA5000E2D778 /* AspectVGrid.swift */,
+				92BC80972BAA3F3F00E2D778 /* VerticalSplitWithHeightLimitOnLower.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -264,6 +267,7 @@
 			files = (
 				92BC80412BA3773800E2D778 /* ControlsView.swift in Sources */,
 				92BC80252BA2AA5000E2D778 /* AspectVGrid.swift in Sources */,
+				92BC80982BAA3F3F00E2D778 /* VerticalSplitWithHeightLimitOnLower.swift in Sources */,
 				92185D152B9CEDC700C5109B /* SetGameView.swift in Sources */,
 				92BC80222BA28E9500E2D778 /* SetGame.swift in Sources */,
 				92BC80322BA2E0CC00E2D778 /* CardSymbol.swift in Sources */,

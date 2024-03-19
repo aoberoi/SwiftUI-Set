@@ -17,20 +17,12 @@ struct SetGameView: View {
     // MARK: - Views
     
     var body: some View {
-        GeometryReader { geometry in
-            // NOTE: The layout intention is to set a maxHeight on controls of 1/4 the available
-            // height (while allowing it to take less based on its own contents). The ZStack sibling
-            // would take the remaining height. However, the .frame(maxHeight:alignment:) modifier
-            // does not work this way. The modifier limits the height proposed to controls, but then
-            // takes up the remaining space up to that maxHeight anyway. This implementation
-            // achieves the same result, but with a less clear expression.
-            // TODO: wrap up the above behavior into a generic view
-            VStack(spacing: 0) {
-                ZStack {
-                    playArea
-                    endGame
-                }
-                    .frame(minHeight: geometry.size.height * (3 / 4))
+        VerticalSplitWithHeightLimitOnLower(
+            upper: ZStack {
+                playArea
+                endGame
+            },
+            lower:
                 // TODO: can some of these be passed through the environment?
                 ControlsView(
                     // TODO: maybe the drawCardsAnimation should be stored and passed in instead of
@@ -43,14 +35,13 @@ struct SetGameView: View {
                     discardCardsDuration: AnimationConstants.discardCardsDuration,
                     cardAspectRatio: DrawingConstants.cardAspectRatio,
                     cardBorderColor: DrawingConstants.CardBorderColors.any
-                )
-                    .layoutPriority(1)
-            }
-            .cardMovementNamespace(cardMovement)
-            .onAppear {
-                withAnimation(.easeInOut(duration: AnimationConstants.drawCardsDuration)) {
-                    game.start()
-                }
+                ),
+            lowerMaxProportionOfHeight: 1/4
+        )
+        .cardMovementNamespace(cardMovement)
+        .onAppear {
+            withAnimation(.easeInOut(duration: AnimationConstants.drawCardsDuration)) {
+                game.start()
             }
         }
     }
