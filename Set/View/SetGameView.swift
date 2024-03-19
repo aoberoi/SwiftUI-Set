@@ -64,7 +64,7 @@ struct SetGameView: View {
         ) { card in
             cardView(for: card)
         }
-        .background(DrawingConstants.playAreaBackgroundColor)
+        .background(.neutralBackground)
     }
     
     private func cardView(for card: SetGame.Card) -> some View {
@@ -131,10 +131,6 @@ struct SetGameView: View {
     }
     
     struct DrawingConstants {
-        // The systemGray UIColors do adjust for light mode and dark mode.
-        // TODO: does it make sense to put these in the asset catalog?
-        static let playAreaBackgroundColor: Color = Color(UIColor.systemGray5)
-        
         static let cardPadding: CGFloat = 8.0
         static let minimumCardWidth: CGFloat = 100.0
         static let cardAspectRatio: CGFloat = 2/1

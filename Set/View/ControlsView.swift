@@ -30,7 +30,7 @@ struct ControlsView: View {
                 .frame(maxWidth: .infinity)
         }
         .padding()
-        .background(Color("FeltGreen"))
+        .background(.feltGreen)
         .foregroundColor(.white)
     }
     
