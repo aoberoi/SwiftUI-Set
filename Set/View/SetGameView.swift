@@ -91,7 +91,11 @@ struct SetGameView: View {
                     .linear(duration: 0.2).repeatCount(2, autoreverses: false) : .none,
                 value: selectionState
             )
-            .onTapGesture(perform: choose(card))
+            .onTapGesture {
+                withAnimation(.easeInOut(duration: AnimationConstants.discardCardsDuration)) {
+                    game.choose(card: card)
+                }
+            }
     }
     
     @ViewBuilder
@@ -107,18 +111,6 @@ struct SetGameView: View {
             }
             .padding()
             .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 8.0))
-        }
-    }
-
-    // MARK: - Actions
-    
-    private func choose(_ card: SetGame.Card) -> (() -> Void) {
-        // TODO: SECOND do i need to capture a weak self? is there a possible memory cycle? how does this
-        // interact with @escaping?
-        return {
-            withAnimation(.easeInOut(duration: AnimationConstants.discardCardsDuration)) {
-                game.choose(card: card)
-            }
         }
     }
     
