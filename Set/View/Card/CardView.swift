@@ -14,13 +14,8 @@ import SwiftUI
 /// the new Grid view. This could impact how aspect ratios are enforced.
 struct CardView: View {
     
-    // TODO: should CardView be able to reach out directly to the ViewModel in order to figure out
-    // properties like the border color, width, and whether or not it is faceUp?
     let card: SetGame.Card
-    // TODO: this may also not be necessary, since we can just use .accentColor
     let borderColor: Color
-    // TODO: This functionality is being removed from CardView, so we need to add it back somewhere
-    // else in the app
     let hasThickBorder: Bool
     var isFaceUp = true
   
@@ -30,7 +25,6 @@ struct CardView: View {
             ZStack {
                 CardBackground(shortestDimensionLength: shortestDimensionLength, borderColor: borderColor)
                 
-                // TODO: card flipping support
                 if isFaceUp {
                     let symbolsAreaPadding = shortestDimensionLength * DrawingConstants.symbolsPaddingProportion
                     CardSymbols(card, spacing: symbolsAreaPadding / 2)

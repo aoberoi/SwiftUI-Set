@@ -61,8 +61,6 @@ struct SetGameView: View {
         )
             .matchedGeometryEffect(id: card.id, in: cardMovement)
             .animation(.none, value: selectionState)
-            // TODO: Should we use the new phaseAnimator or keyframeAnimator to accomplish this?
-            // TODO: Should we use the new scoped implicit animation view modifiers?
             .shakeEffect(direction: .horizontal, pct: selectionState == .partOfMismatch ? 1 : 0)
             .shakeEffect(direction: .vertical, pct: selectionState == .partOfMatch ? 1 : 0)
             // Using an implicit animation to separate the shakeEffect from the explicit animation
@@ -101,8 +99,6 @@ struct SetGameView: View {
     
     // MARK: - Helpers
 
-    // TODO: make this function take a card as the argument and then make the function available
-    // through the environment?
     private func borderColor(for selectionState: SetGame.CardSelectionState) -> Color {
         switch selectionState {
         case .unselected:
@@ -131,7 +127,7 @@ struct SetGameView: View {
     }
     
     struct AnimationConstants {
-        // TODO: Defining both of these constants is not optimal. They are separated in order
+        // NOTE: Defining both of these constants is not optimal. They are separated in order
         // to implement staged/chained animations in an ad-hoc manner (see ControlView). These
         // chained animations could be cleaner, and allow for more dynamic situations (such as a
         // group of cards flying in a staggered way) using custom animations. Also worth

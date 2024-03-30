@@ -10,6 +10,8 @@ import SwiftUI
 /// A container of two views, vertically stacked, where the lower view is constrained to by a maximum proportion of the vertical
 /// space for its height. The lower view can choose to take up less than the maximum proportion, and when it does the rest of the
 /// unused height is offered to the upper view. The combined view will take all the space it is offered.
+/// NOTE: the relatively new ScrollView.safeAreaInsets() modifier might be able to accomplish what this container accomplishes, when
+/// the upper view is a ScrollView (which it is in this app's usage).
 struct VerticalSplitWithHeightLimitOnLower<Upper: View, Lower: View>: View {
     let upper: Upper
     let lower: Lower

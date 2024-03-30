@@ -9,7 +9,6 @@ import Foundation
 import Algorithms
 
 struct Set: CustomStringConvertible {
-    // TODO: move description stuff into a separate extension (is there some protocol?)
     var description: String {
         """
         Deck: \(Set.describeCards(deck))
@@ -193,8 +192,6 @@ struct Set: CustomStringConvertible {
     
     struct Card: Identifiable, Hashable, CustomStringConvertible {
         
-        // TODO: Remove the following description code because it references information that should
-        // only be known in the View layer
         private static func symbolDescription(_ symbol: TriState) -> String {
             switch symbol {
             case .first:

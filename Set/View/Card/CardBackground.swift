@@ -23,7 +23,6 @@ struct CardBackground: View {
         ZStack {
             // Paper
             RoundedRectangle(cornerRadius: cardCornerRadius)
-                // TODO: Is systemBackground the right environment property to receive the paper color?
                 .fill(Color(uiColor: .systemBackground))
             // Border
             RoundedRectangle(cornerRadius: borderCornerRadius)

@@ -31,7 +31,7 @@ struct CardSymbols: View {
             // It might be useful to use a .transition(identity) (or similar) on the containers if
             // we find visible transition animations occurring. Another way to avoid this would be
             // to use the Layout protocol to create a container that switches internally, so that
-            // the contained views' identity doesn't change.
+            // the contained views' identity doesn't change. Or maybe ViewThatFits?
             let layoutDirection = LayoutDirection.bestFit(for: geometry.size)
 //            let shortestDimensionLength = min(geometry.size.height, geometry.size.width)
             

@@ -10,7 +10,6 @@ import SwiftUI
 struct CardPile: View {
     let cards: [SetGame.Card]
     let isFaceUp: Bool
-    // TODO: can the borderColor come from the environment? can it be a defaultValue?
     let borderColor: Color
     
     @Environment(\.cardMovement) var cardMovement
